@@ -1,0 +1,31 @@
+{
+  "name": "Splitmo",
+  "version": "0.0.2",
+  "homepage": "https://jqkiger.github.io/COGS120-JAY/",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "latest",
+    "@material-ui/icons": "^3.0.1",
+    "ajv": "^6.5.4",
+    "gh-pages": "^2.0.1",
+    "prop-types": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-scripts": "latest",
+    "recharts": "^1.3.5"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
