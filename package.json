@@ -1,7 +1,7 @@
 {
   "name": "Splitmo",
   "version": "0.0.2",
-  "homepage": "https://jqkiger.github.io/COGS120-JAY/",
+  "homepage": "https://jqkiger.github.io/COGS120-JAY-TEST/",
   "private": true,
   "dependencies": {
     "@material-ui/core": "latest",
