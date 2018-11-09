@@ -25,29 +25,28 @@ import AddIcon from "@material-ui/icons/Add";
 import withRoot from "../withRoot";
 import AppBar from "../Components/AppBar.jsx";
 
-
-function calculateOwed(data){
-		var i;
-		var val=0;
-		var arr= data.participants;
-		for (i = 0; i < arr.length; i++) {
-			if(parseInt(arr[i].paid) == 0){
-    			val += parseFloat(arr[i].amount);
-    		}
-		} 
-		return val.toFixed(2);
+function calculateOwed(data) {
+	var i;
+	var val = 0;
+	var arr = data.participants;
+	for (i = 0; i < arr.length; i++) {
+		if (parseInt(arr[i].paid) == 0) {
+			val += parseFloat(arr[i].amount);
+		}
+	}
+	return val.toFixed(2);
 }
 
-function calculatePaid(data){
-		var i;
-		var val=0;
-		var arr= data.participants;
-		for (i = 0; i < arr.length; i++) {
-			if(parseInt(arr[i].paid) == 1){
-    			val += parseFloat(arr[i].amount);
-    		}
-		} 
-		return val.toFixed(2);
+function calculatePaid(data) {
+	var i;
+	var val = 0;
+	var arr = data.participants;
+	for (i = 0; i < arr.length; i++) {
+		if (parseInt(arr[i].paid) == 1) {
+			val += parseFloat(arr[i].amount);
+		}
+	}
+	return val.toFixed(2);
 }
 
 class Activity extends React.Component {
@@ -58,9 +57,9 @@ class Activity extends React.Component {
 	};
 
 	handleClickPay = () => {
-		this.setState({ payOpen: true});
-		if(this.state.descriptionOpen){
-			this.setState({descriptionOpen:false });
+		this.setState({ payOpen: true });
+		if (this.state.descriptionOpen) {
+			this.setState({ descriptionOpen: false });
 		}
 	};
 
@@ -69,9 +68,9 @@ class Activity extends React.Component {
 	};
 
 	handleClickRemind = () => {
-		this.setState({ remindOpen: true});
-		if(this.state.descriptionOpen){
-			this.setState({descriptionOpen:false });
+		this.setState({ remindOpen: true });
+		if (this.state.descriptionOpen) {
+			this.setState({ descriptionOpen: false });
 		}
 	};
 
@@ -87,70 +86,111 @@ class Activity extends React.Component {
 		this.setState({ descriptionOpen: false });
 	};
 
-	handlePay = (index) => {
+	handlePay = index => {
 		console.log("handlePay");
 		this.setState({ payOpen: false });
 		this.props.update(1);
 	};
+
+	getDebtors = () =>{
+		var list = [];
+		var participants = this.props.data.participants;
+		console.log(participants);
+		for( var i=0; i<(participants.length);i++){
+			if(participants[i].paid == "0"){
+				list.push(participants[i]);
+			}
+		}
+		console.log("FUCK");
+		console.log(list);
+		return list;
+	}
 
 	render() {
 		const { payOpen, remindOpen, descriptionOpen } = this.state;
 		const data = this.props.data;
 		let buttons;
 		let title;
+		const debtors = this.getDebtors();
 
 		//render pay and remind button if transaction is not complete
-		if(data.complete == "0"){
-			buttons = parseInt(data.lender) === 0 ? 
-							
-						<Button
-							variant="contained"
-							color={"inherit"}
-							aria-label="remind"
-							onClick={() => this.handleClickRemind()}
-						>
-						Remind 
-						</Button> 
-					:					
-						<Button
-							variant="contained"
-							color="secondary"
-							aria-label="pay"
-							onClick={() => this.handleClickPay()}
-						>
+		if (data.complete == "0") {
+			buttons =
+				parseInt(data.lender) === 0 ? (
+					<Button
+						variant="contained"
+						color={"inherit"}
+						aria-label="remind"
+						onClick={() => this.handleClickRemind()}
+					>
+						Remind
+					</Button>
+				) : (
+					<Button
+						variant="contained"
+						color="secondary"
+						aria-label="pay"
+						onClick={() => this.handleClickPay()}
+					>
 						Pay
-						</Button>	
+					</Button>
+				);
 		}
 
-		if(data.complete =="0"){
-			title = parseInt(data.lender) === 0 ?
-					<ListItemText primary={data.title + " - You are owed $"+ calculateOwed(data)} />
-				:
-					<ListItemText primary={data.title + " - You owe $"+ data.participants[0].amount} />
+		if (data.complete == "0") {
+			title =
+				parseInt(data.lender) === 0 ? (
+					<ListItemText
+						primary={
+							data.title +
+							" - You are owed $" +
+							calculateOwed(data)
+						}
+					/>
+				) : (
+					<ListItemText
+						primary={
+							data.title +
+							" - You owe $" +
+							data.participants[0].amount
+						}
+					/>
+				);
 		} else {
-			title = parseInt(data.lender) === 0 ?
-					<ListItemText primary={data.title + " - You were paid back $"+ calculatePaid(data)} />
-				:
-					<ListItemText primary={data.title + " - You paid $"+ data.participants[0].amount} />
+			title =
+				parseInt(data.lender) === 0 ? (
+					<ListItemText
+						primary={
+							data.title +
+							" - You were paid back $" +
+							calculatePaid(data)
+						}
+					/>
+				) : (
+					<ListItemText
+						primary={
+							data.title +
+							" - You paid $" +
+							data.participants[0].amount
+						}
+					/>
+				);
 		}
 
 		return (
 			<div>
-					<ListItem
-						dense
-						button
-						onClick={() => this.handleClickDescription()}
-					>
-						<Avatar
-							alt="Remy Sharp"
-							src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png"
-						/>
-						{title}
-						<ListItemSecondaryAction>
-						{buttons}
-						</ListItemSecondaryAction>
-						
-					</ListItem>
+				<ListItem
+					dense
+					button
+					onClick={() => this.handleClickDescription()}
+				>
+					<Avatar
+						alt="Remy Sharp"
+						src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png"
+					/>
+					{title}
+					<ListItemSecondaryAction>{buttons}</ListItemSecondaryAction>
+				</ListItem>
 
 				<Dialog
 					open={this.state.payOpen}
@@ -158,15 +198,22 @@ class Activity extends React.Component {
 					aria-labelledby="pay-dialog"
 				>
 					<DialogTitle id="pay-dialog">
-						{"Pay "+ data.owner + " $"+calculateOwed(data)+"?"}
+						{"Pay " + data.owner + " $" + calculateOwed(data) + "?"}
 					</DialogTitle>
 					<DialogActions>
-						<Button 
+						<Button
 							variant="contained"
 							color="secondary"
 							onClick={() => this.handlePay(parseInt(data.id))}
 						>
-						Cash
+							Cash
+						</Button>
+						<Button
+							variant="contained"
+							color="primary"
+							onClick={() => this.handlePay(parseInt(data.id))}
+						>
+							Venmo
 						</Button>
 					</DialogActions>
 				</Dialog>
@@ -177,8 +224,32 @@ class Activity extends React.Component {
 					aria-labelledby="remind-dialog"
 				>
 					<DialogTitle id="remind-dialog">
-						Methods to remind Page
+						Select the users  you need to remind to remind                           
 					</DialogTitle>
+					<DialogContent>
+						<DialogContent>
+							<List dense>
+								{debtors.map(value => (
+									<ListItem key={value} button>
+										<Avatar
+											alt="Remy Sharp"
+											src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png"
+										/>
+										<ListItemText primary={value.name}>
+										</ListItemText>
+										<ListItemSecondaryAction>
+											<Button 
+												variant = "contained" 
+												color ="inherit" 
+												onClick={this.handleCloseRemind}>
+												Send Reminder
+											</Button>
+										</ListItemSecondaryAction>
+									</ListItem>
+								))}
+							</List>
+						</DialogContent>
+					</DialogContent>
 				</Dialog>
 
 				<Dialog
@@ -187,14 +258,12 @@ class Activity extends React.Component {
 					aria-labelledby="description-dialog"
 				>
 					<DialogTitle id="description-dialog">
-						{data.title} 
+						{data.title}
 					</DialogTitle>
 					<DialogContent>
-					{data.date}: {data.description}
+						{data.date}: {data.description}
 					</DialogContent>
-					<DialogActions>
-						{buttons}
-					</DialogActions>
+					<DialogActions>{buttons}</DialogActions>
 				</Dialog>
 			</div>
 		);

@@ -222,6 +222,7 @@ class Home extends React.Component {
           </DialogTitle>
           <DialogContent>
           <List dense>
+          {console.log(friends.list)}
           {friends.list.map(value => (
             <ListItem key={value} button>
               <Avatar alt="Remy Sharp" src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png" />
