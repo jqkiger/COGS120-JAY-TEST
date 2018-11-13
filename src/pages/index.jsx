@@ -120,15 +120,45 @@ class Index extends React.Component {
     ]};
 
     var json2={"list":[
-      { "id": 1, "name": "Yvonne Hou"},
-      { "id": 2, "name": "Alex Mao"},
-      { "id": 3, "name": "Jane Doe"},
-      { "id": 4, "name": "John Doe"}
+      { "id": 1, "name": "Yvonne Hou", "u":"guest5", "pw":"pw5", "friends":
+        [
+          {"id":1, "name": "Jonathan Kiger"},
+          {"id":2, "name": "Alex Mao"}
+        ]
+      },
+      { "id": 2, "name": "Alex Mao", "u":"guest4", "pw":"pw4", "friends":
+        [
+          {"id":1, "name": "Yivonne Hou"},
+          {"id":2, "name": "Alex Mao"}
+        ]   
+      },
+      { "id": 3, "name": "Jane Doe", "u":"guest3", "pw":"pw3", "friends":
+        [
+          {"id":1, "name": "Jonathan Kiger"}
+        ]
+
+      },
+      { "id": 4, "name": "John Doe", "u":"guest2", "pw":"pw2", "friends":
+        [
+          {"id":1, "name": "Jonathan Kiger"},
+        ]
+
+      },
+      { "id": 5, "name": "Jonathan Kiger", "u":"guest1", "pw":"pw1", "friends":
+        [
+          {"id":1, "name": "Jane Doe"},
+          {"id":2, "name": "John Doe"},
+          {"id":3, "name": "Yivonne Hou"},
+          {"id":4, "name": "Alex Mao"}
+        ]
+
+      }
     ]};
 
     if(sessionStorage.getItem('count')==null){
+      //so that this only gets called once
       sessionStorage.setItem('count', 0);
-      sessionStorage.setItem('people', JSON.stringify(json2));
+      sessionStorage.setItem('users', JSON.stringify(json2));
       sessionStorage.setItem('activities', JSON.stringify(json));
     }
 

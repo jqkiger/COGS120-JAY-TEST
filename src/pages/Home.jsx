@@ -50,7 +50,10 @@ const options = ["Food", "Recreation", "Shopping", "Bills", "Other"];
 
 
 function getFriends(){
-  return JSON.parse(sessionStorage.getItem('people'));
+	var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+	console.log(currentUser.friends);
+	var friends = currentUser.friends;
+  return friends;
 }
 
   //Returns all activities
@@ -157,7 +160,7 @@ class Home extends React.Component {
 
   getPeopleAdded(){
     var peopleList = [];
-    var friends = getFriends().list;
+    var friends = getFriends();
     if(!this.state.confirmationOpen){
       return peopleList;
     }
@@ -222,8 +225,8 @@ class Home extends React.Component {
           </DialogTitle>
           <DialogContent>
           <List dense>
-          {console.log(friends.list)}
-          {friends.list.map(value => (
+          {console.log(friends)}
+          {friends.map(value => (
             <ListItem key={value} button>
               <Avatar alt="Remy Sharp" src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png" />
               <ListItemText primary={value.name} />

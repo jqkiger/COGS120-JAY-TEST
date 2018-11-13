@@ -20,6 +20,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import MenuList from "@material-ui/core/MenuList";
 import MenuItem from "@material-ui/core/MenuItem";
 import Input from '@material-ui/core/Input';
+import TextField from '@material-ui/core/TextField';
 
 import MenuIcon from "@material-ui/icons/Menu";
 import NotificationsIcon from "@material-ui/icons/Notifications";
@@ -59,53 +60,124 @@ const styles = theme =>( {
 
 class Login extends React.Component{
   state = {
-    };
+    uname: 'username',
+    pw: 'password',
+    invalid: false
+  };
+
+  handleChange = name => event =>{
+    this.setState({
+      [name]: event.target.value
+    });
+    console.log(this.state.uname);
+    console.log(this.state.pw);
+  }; 
+
+  handleCloseInvalid = () => {
+    this.setState({ invalid: false });
+  };
+
+  handleOpenInvalid = () => {
+    this.setState({ invalid: true });
+  };
+
+  checkCredentials = () => {
+    var users = JSON.parse(sessionStorage.getItem('users')).list;
+    for(var i=0; i<users.length;i++){
+      console.log(users[i]);
+      if(users[i].u == this.state.uname && users[i].pw == this.state.pw){
+        sessionStorage.setItem('currentUser', JSON.stringify(users[i]))
+        return true;
+      }
+    }
+  };
+
+
 
 
   render(){
     const { classes } = this.props;
 
+    const incorrectLogin = (
+      <div>
+        <Typography variant="h6" color="inherit" className={classes.grow}>
+          <Link to="/Home" onClick={(event) => event.preventDefault()}>
+            <Button
+              className={classes.button}
+              variant="contained"
+              onClick={() => this.handleOpenInvalid()}
+              color="primary"  
+            >
+             Login
+            </Button>
+          </Link>
+        </Typography>
+      </div>
+    );
+
+    const correctLogin = (
+      <div>
+        <Typography variant="h6" color="inherit" className={classes.grow}>
+          <Link to="/Home">
+            <Button
+              className={classes.button}
+              variant="contained"
+              
+              color="primary"  
+            >
+             Login
+            </Button>
+          </Link>
+        </Typography>
+      </div>
+    );
+
+
+
     return(
       <div>
-      <div className={classes.root}>
-        <AppBar position="static" title ="Splitmo" >
-          <Toolbar>
-            <Button
-              className={classes.menuButton}
-              color="inherit"
-              aria-label="Open drawer"
-            />              
-              <Typography variant="h6" color="inherit" className={classes.grow}>
-                Splitmo
-              </Typography>
-          </Toolbar>
-        </AppBar>
-      </div>
-      <Typography className={classes.grow}>
-        <Input
-          defaultValue="Email"
-          className={classes.input}
-        />
-      </Typography>
+        <div className={classes.root}>
+          <AppBar position="static" title ="Splitmo" >
+            <Toolbar>
+              <Button
+                className={classes.menuButton}
+                color="inherit"
+                aria-label="Open drawer"
+              />              
+                <Typography variant="h6" color="inherit" className={classes.grow}>
+                  Splitmo
+                </Typography>
+            </Toolbar>
+          </AppBar>
+        </div>
+        <Typography variant="h6" color="inherit" className={classes.grow}>
+          <TextField
+            value={this.state.uname}
+            onChange={this.handleChange('uname')}
+            margin = "normal"
+          />
+        </Typography>
 
-      <Typography className={classes.grow}>
-        <Input
-          defaultValue="Password"
-          className={classes.input}
-        />
-      </Typography>
+        <Typography variant="h6" color="inherit" className={classes.grow}>
+          <TextField
+            value={this.state.pw}
+            onChange={this.handleChange('pw')}
+            margin = "normal"
+            type="password"
+          />
+        </Typography>
 
-      <Typography variant="h6" color="inherit" className={classes.grow}>
-        <Button
-          className={classes.button}
-          variant="contained"
-          component={Link} to ="/Home"
-          color="primary"  
-        >
-         Login
-        </Button>
-      </Typography>
+        {this.checkCredentials() ? correctLogin : incorrectLogin}
       
+        <Dialog
+          open={this.state.invalid}
+          onClose={this.handleCloseInvalid}
+          aria-labelledby="description-dialog"
+        >
+          <DialogTitle id="description-dialog">
+            Incorrect username or password
+          </DialogTitle>
+        </Dialog>
       </div>
     );
   }
