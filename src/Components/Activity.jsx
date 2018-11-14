@@ -18,12 +18,39 @@ import ListItemText from "@material-ui/core/ListItemText";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Radio from "@material-ui/core/Radio";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import IconButton from "@material-ui/core/IconButton";
 
 import AddAPhoto from "@material-ui/icons/AddAPhoto";
 import AddIcon from "@material-ui/icons/Add";
 import withRoot from "../withRoot";
 import AppBar from "../Components/AppBar.jsx";
+import blue from '@material-ui/core/colors/blue';
+
+
+const theme = createMuiTheme({
+	overrides: {
+		MuiButton: {
+			root: {
+				background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+        border: 0,
+        boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+			},
+		},
+	},
+});
+
+const theme2 = createMuiTheme({
+	overrides: {
+		MuiButton: {
+			root: {
+        border: 0,
+        boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+				color: 'red',
+			},
+		},
+	},
+});
 
 function calculateOwed(data) {
 	var i;
@@ -117,23 +144,29 @@ class Activity extends React.Component {
 		if (data.complete == "0") {
 			buttons =
 				parseInt(data.lender) === 0 ? (
+
+
+					<MuiThemeProvider theme={theme}>
 					<Button
 						variant="contained"
-						color={"inherit"}
 						aria-label="remind"
 						onClick={() => this.handleClickRemind()}
 					>
 						Remind
 					</Button>
+					</MuiThemeProvider>
 				) : (
+
+					<MuiThemeProvider theme={theme2}>
 					<Button
 						variant="contained"
-						color="secondary"
+						color="primary"
 						aria-label="pay"
 						onClick={() => this.handleClickPay()}
 					>
 						Pay
 					</Button>
+						</MuiThemeProvider>
 				);
 		}
 
@@ -210,7 +243,7 @@ class Activity extends React.Component {
 						</Button>
 						<Button
 							variant="contained"
-							color="primary"
+							color="secondary"
 							onClick={() => this.handlePay(parseInt(data.id))}
 						>
 							Venmo
@@ -224,7 +257,7 @@ class Activity extends React.Component {
 					aria-labelledby="remind-dialog"
 				>
 					<DialogTitle id="remind-dialog">
-						Select the users  you need to remind to remind                           
+						Select the users  you need to remind to remind
 					</DialogTitle>
 					<DialogContent>
 						<DialogContent>
@@ -238,9 +271,9 @@ class Activity extends React.Component {
 										<ListItemText primary={value.name}>
 										</ListItemText>
 										<ListItemSecondaryAction>
-											<Button 
-												variant = "contained" 
-												color ="inherit" 
+											<Button
+												variant = "contained"
+												color ="inherit"
 												onClick={this.handleCloseRemind}>
 												Send Reminder
 											</Button>

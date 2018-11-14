@@ -9,14 +9,19 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 const theme = createMuiTheme({
   palette: {
     primary: {
-      light: blue[300],
-      main: blue[500],
-      dark: blue[700],
+      main: '#475C7A',
     },
     secondary: {
-      light: lightGreen[300],
-      main: lightGreen[500],
-      dark: lightGreen[700],
+      light: '#685D79',
+      main: '#FCBB6D',
+      dark: '#e59866',
+    },
+  },
+  overrides: {
+    MuiButton: {
+      Primary: {
+        color: "#D8737F",
+      },
     },
   },
   typography: {
