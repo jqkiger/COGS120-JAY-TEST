@@ -30,7 +30,7 @@ function calculateOwed(data) {
 	var val = 0;
 	var arr = data.participants;
 	for (i = 0; i < arr.length; i++) {
-		if (parseInt(arr[i].paid) == 0) {
+		if (parseInt(arr[i].paid) == "0") {
 			val += parseFloat(arr[i].amount);
 		}
 	}
@@ -42,12 +42,13 @@ function calculatePaid(data) {
 	var val = 0;
 	var arr = data.participants;
 	for (i = 0; i < arr.length; i++) {
-		if (parseInt(arr[i].paid) == 1) {
+		if (parseInt(arr[i].paid) == "1") {
 			val += parseFloat(arr[i].amount);
 		}
 	}
 	return val.toFixed(2);
 }
+
 
 class Activity extends React.Component {
 	state = {
@@ -88,8 +89,9 @@ class Activity extends React.Component {
 
 	handlePay = index => {
 		console.log("handlePay");
+		console.log(this.props.data.id);
 		this.setState({ payOpen: false });
-		this.props.update(1);
+		this.props.update(index);
 	};
 
 	getDebtors = () =>{
@@ -104,7 +106,16 @@ class Activity extends React.Component {
 		console.log("FUCK");
 		console.log(list);
 		return list;
-	}
+	};
+
+	isOwner = () =>{
+		var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+		console.log("I am hungry");
+		console.log(currentUser.name);
+		if(this.props.data.owner == currentUser.name){
+			return true;
+		}
+	};
 
 	render() {
 		const { payOpen, remindOpen, descriptionOpen } = this.state;
@@ -116,7 +127,7 @@ class Activity extends React.Component {
 		//render pay and remind button if transaction is not complete
 		if (data.complete == "0") {
 			buttons =
-				parseInt(data.lender) === 0 ? (
+				this.isOwner() ? (
 					<Button
 						variant="contained"
 						color={"inherit"}

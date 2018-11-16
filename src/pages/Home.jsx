@@ -62,6 +62,8 @@ function getHistory(){
     if(sessionStorage.getItem('called') != "1"){
       history = history.list;
     }
+    console.log("Get History");
+    console.log(history);
     return history;
 }
 
@@ -171,7 +173,7 @@ class Home extends React.Component {
     for(var i=0; i<this.state.people-1;i++){
       var ind = this.state.checked[i];
       var fname = friends[ind-1].name;
-      peopleList.push({id:(i+1), name:fname, amount: charge, paid: 0})
+      peopleList.push({id:(i+1), name:fname, amount: charge, paid: "0"})
     }
     console.log(peopleList);
     return peopleList;
@@ -180,7 +182,9 @@ class Home extends React.Component {
   updateData(){
     var activities = getHistory(); 
     var peopleList = this.getPeopleAdded();  
-    var data = { id: activities.length,
+    console.log("Create new Listing")
+    console.log(activities.length)
+    var data = { id: activities.length+1,
                 title: "New Activity (PlaceHolder)",
                 date: "11/7/2018",
                 description: this.state.description,
@@ -211,7 +215,6 @@ class Home extends React.Component {
       checked,
     } = this.state;
     const friends = getFriends();
-
     return (
       <div>
       <AppBar/>

@@ -38,9 +38,71 @@ function getActivities(){
 	if(sessionStorage.getItem('called') != "1"){
 		activities = activities.list;
 	}
+	for(var i=0;i<activities.length;i++){
+		console.log("wutface");
+		console.log(activities[0]);
+		if(!relevantActivity(activities[i])){
+			activities.splice(i,1);
+			i--;
+		}
+	}
 	activities = activities.filter(item => item.complete === "0");
+	console.log("rage");
+	console.log(activities);
 	return activities;
 
+}
+
+//returns if currentUser is involved in active activity
+function relevantActivity(activity){
+	var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+	console.log("FUUUUUUCK");
+	console.log(currentUser.name);
+	console.log(activity.owner);
+	if(currentUser.name == activity.owner){
+		console.log("Dammit");
+		return true;
+	}
+
+	var participants = activity.participants;
+	for(var i=0; i<participants.length;i++){
+
+		if(participants[i].name == currentUser.name && participants[i].paid == "0"){
+			console.log("Fuggit");
+			return true;
+		}
+	}
+	return false;
+}
+
+//returns if currentUser is involved in any activity
+function relevantHistory(activity){
+	var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+	console.log("FUUUUUUCK");
+	console.log(currentUser.name);
+	console.log(activity.owner);
+	if(currentUser.name == activity.owner){
+		console.log("Dammit");
+		return true;
+	}
+
+	var participants = activity.participants;
+	for(var i=0; i<participants.length;i++){
+
+		if(participants[i].name == currentUser.name){
+			console.log("Fuggit");
+			return true;
+		}
+	}
+	return false;
+}
+
+function ifOwner(activity){
+	var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+
+	if(activity.owner == currentUser.name){
+		return true;
+	}
 }
 
 //Returns all activities
@@ -49,11 +111,66 @@ function getHistory(){
 	if(sessionStorage.getItem('called') != "1"){
 		history = history.list;
 	}
+
+	for(var i=0;i<history.length;i++){
+		console.log("wutface");
+		console.log(history[0]);
+		if(!relevantHistory(history[i])){
+			history.splice(i,1);
+			i--;
+		}
+	}
+
 	return history;
 }
 
+function getAllHistory(){
+	var history = JSON.parse(sessionStorage.getItem('activities'));
+    if(sessionStorage.getItem('called') != "1"){
+      history = history.list;
+    }
+    return history;
+}
 
+function updatePayment(index){
+	console.log("index");
+	console.log(index);
+	var activities = getAllHistory();
+	console.log("history");
+	console.log(activities);
+	var activity = activities[index-1];
+	var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+	var participants = activity.participants;
 
+	for(var i=0; i<participants.length;i++){
+
+		if(participants[i].name == currentUser.name){
+			participants[i].paid = "1";
+			break;
+		}
+	}
+	console.log("participants");
+	console.log(participants);
+	activity.participants = participants;
+
+	for(var i=0; i<participants.length;i++){
+
+		if(participants[i].paid == "0"){
+			break;
+		}
+
+		if((i+1) == participants.length){
+			activity.complete="1";
+		}
+	}
+
+	console.log("activity");
+	console.log(activity);
+
+	activities[index-1] = activity;
+
+	return activities;
+}
 
 class ActivityList extends React.Component {
 	state={
@@ -63,14 +180,11 @@ class ActivityList extends React.Component {
 	//UpdateList called by child when completing payment
 	updateList = (index) =>{
 		console.log("updateList");
-		var activities = getHistory();
-		console.log(activities);
-		activities[index-1].complete = "1";
-      	sessionStorage.setItem('activities', JSON.stringify(activities));
-      	activities = JSON.parse(sessionStorage.getItem('activities'));
+		console.log(index);
+		var newActivities = updatePayment(index);
+		console.log(newActivities);
+      	sessionStorage.setItem('activities', JSON.stringify(newActivities));
 		this.setState(this.state);
-		console.log(activities);
-		console.log("updateList done");
 		sessionStorage.setItem('called', "1");
 
 	};
@@ -86,7 +200,7 @@ class ActivityList extends React.Component {
 					{this.props.type == "active" ?
 		          		<List>{items.map(item =>(<Activity data={item} update={this.updateList}/>))}</List>	
 		          	:
-		          		<List>{history.map(item =>(<Activity data={item} update={this.updateList}/>))}</List>	
+		          		<List>{history.map(item =>(<Activity data={item} update={this.updateList} />))}</List>	
 		          	}		    	
 		        </div>	
 	        </div>	
