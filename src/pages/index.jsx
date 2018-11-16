@@ -129,7 +129,7 @@ class Index extends React.Component {
       { "id": 2, "name": "Alex Mao", "u":"guest4", "pw":"pw4", "friends":
         [
           {"id":1, "name": "Yivonne Hou"},
-          {"id":2, "name": "Alex Mao"}
+          {"id":2, "name": "Jonathan Kiger"}
         ]   
       },
       { "id": 3, "name": "Jane Doe", "u":"guest3", "pw":"pw3", "friends":

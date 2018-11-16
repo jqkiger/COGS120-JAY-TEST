@@ -28,7 +28,8 @@ import ExitToApp from "@material-ui/icons/ExitToApp"
 
 const styles = {
   root: {
-    flexGrow: 1
+    flexGrow: 1,
+    textAlign: "center",
   },
   grow: {
     flexGrow: 1,
@@ -128,7 +129,7 @@ class ButtonAppBar extends React.Component {
               focusRipple="true"
             >
               <Typography variant="h6" color="inherit" className={classes.grow}>
-                Splitmo
+                Splitmo 
               </Typography>
             </Button>
             

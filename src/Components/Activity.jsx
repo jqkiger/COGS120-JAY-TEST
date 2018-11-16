@@ -161,6 +161,20 @@ class Activity extends React.Component {
 		}
 	};
 
+	parseDebtors = () =>{
+		var participants = this.props.data.participants;
+		var str = ""
+		for( var i=0; i<(participants.length);i++){
+			if(i+1 == participants.length){
+				str = str + participants[i].name;
+			}
+			else{
+				str = str + participants[i].name + ",";
+			}
+		}
+		return str;
+	}
+
 	render() {
 		const { payOpen, remindOpen, descriptionOpen } = this.state;
 		const data = this.props.data;
@@ -211,7 +225,7 @@ class Activity extends React.Component {
 					<ListItemText
 						primary={
 							data.title +
-							" - You owe $" +
+							" - You owe "+ data.owner +" $" +
 							data.participants[0].amount
 						}
 					/>
@@ -230,7 +244,7 @@ class Activity extends React.Component {
 					<ListItemText
 						primary={
 							data.title +
-							" - You paid $" +
+							" - You paid "+ data.owner +" $" +
 							data.participants[0].amount
 						}
 					/>
@@ -284,7 +298,7 @@ class Activity extends React.Component {
 					aria-labelledby="remind-dialog"
 				>
 					<DialogTitle id="remind-dialog">
-						Select the users  you need to remind to remind
+						&nbsp; &nbsp; &nbsp; Select the users you need to remind &nbsp; &nbsp; &nbsp; &nbsp;
 					</DialogTitle>
 					<DialogContent>
 						<DialogContent>
@@ -321,7 +335,16 @@ class Activity extends React.Component {
 						{data.title}
 					</DialogTitle>
 					<DialogContent>
-						{data.date}: {data.description}
+						<DialogContentText>
+              				Lender: {data.owner}
+            			</DialogContentText>
+            			<DialogContentText>
+              				Debtors: {this.parseDebtors()}
+            			</DialogContentText>
+						<DialogContentText>
+              				{data.date}: {data.description}
+            			</DialogContentText>
+						
 					</DialogContent>
 					<DialogActions>{buttons}</DialogActions>
 				</Dialog>

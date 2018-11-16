@@ -72,6 +72,7 @@ class Home extends React.Component {
     open: false,
     description: "",
     checked: [],
+    title: "",
   };
 
   handleClose = () => {
@@ -112,7 +113,7 @@ class Home extends React.Component {
   handleConfirmation = () => {
     var ppl = parseInt(this.state.people);
     var added = this.state.checked.length;
-    if(added == ppl-1){
+    if(added == ppl){
       this.setState({ confirmationOpen: true, pageTwoOpen: false });
     }
   };
@@ -124,6 +125,10 @@ class Home extends React.Component {
 
   handleChangeDescription = (event) => {
     this.setState({ description: event.target.value });    
+  };
+
+  handleChangeTitle = (event) => {
+    this.setState({ title: event.target.value });    
   };
 
   handleChangeAmount = (event) => {
@@ -156,7 +161,7 @@ class Home extends React.Component {
 
   calculateCharge(){
     var total = parseFloat(this.state.amount);
-    var totalPeople = parseFloat(this.state.people);
+    var totalPeople = parseFloat(this.state.people)+1.0;
     return (total/totalPeople).toFixed(2);
   }
 
@@ -170,7 +175,7 @@ class Home extends React.Component {
     console.log(this.state.checked);
     console.log(friends[0].name)
     var charge = this.calculateCharge();
-    for(var i=0; i<this.state.people-1;i++){
+    for(var i=0; i<this.state.people;i++){
       var ind = this.state.checked[i];
       var fname = friends[ind-1].name;
       peopleList.push({id:(i+1), name:fname, amount: charge, paid: "0"})
@@ -184,13 +189,14 @@ class Home extends React.Component {
     var peopleList = this.getPeopleAdded();  
     console.log("Create new Listing")
     console.log(activities.length)
+    var currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
     var data = { id: activities.length+1,
-                title: "New Activity (PlaceHolder)",
+                title: this.state.title,
                 date: "11/7/2018",
                 description: this.state.description,
                 lender: "0",
                 total: this.state.amount,
-                owner: "Jonathan Kiger",
+                owner: currentUser.name,
                 complete: "0",
                 participants: peopleList
             }
@@ -213,6 +219,7 @@ class Home extends React.Component {
       amount,
       people,
       checked,
+      title,
     } = this.state;
     const friends = getFriends();
     return (
@@ -306,8 +313,18 @@ class Home extends React.Component {
             <DialogContent>
               <DialogContentText>
                 To split a purchase please enter a description, the total cost,
-                and the number of people involved (including yourself).
+                and the number of people involved (excluding yourself).
               </DialogContentText>
+              <TextField
+                autoFocus
+                value={this.state.title}
+                margin="dense"
+                id="standard-required"
+                label="Title of purchase"
+                type="text"
+                fullWidth
+                onChange={this.handleChangeTitle}
+              />
               <TextField
                 autoFocus
                 value={this.state.description}
@@ -334,7 +351,7 @@ class Home extends React.Component {
                 value={this.state.people}
                 margin="dense"
                 id="standard-required"
-                label="Total people"
+                label="Number of other people"
                 type="number"
                 fullWidth
                 onChange={this.handleChangePeople}
