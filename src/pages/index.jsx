@@ -57,7 +57,7 @@ class Index extends React.Component {
                 "description": "TapEx at Price Center",
                 "lender": "1",
                 "total": "6.30",
-                "owner": "Yivonne Hou",
+                "owner": "Yvonne Hou",
                 "complete": "0",
                 "participants": 
                   [
@@ -154,6 +154,7 @@ class Index extends React.Component {
 
       }
     ]};
+
 
     if(sessionStorage.getItem('count')==null){
       //so that this only gets called once

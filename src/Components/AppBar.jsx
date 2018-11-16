@@ -24,6 +24,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import Group from "@material-ui/icons/Group";
+import ExitToApp from "@material-ui/icons/ExitToApp"
 
 const styles = {
   root: {
@@ -53,30 +54,14 @@ class ButtonAppBar extends React.Component {
     this.setState({isDrawerOpen: open});
   };
 
-  handleFriendsClick = () => {};
 
-  handleClickProfile = () => {
-    this.setState({ profileOpen: true });
+  handleClickIcon = () => {
     this.setState({isDrawerOpen: !this.state.isDrawerOpen});
-  };
-
-  handleClickFriends = () => {
-    this.setState({ friendsOpen: true });
-    this.setState({isDrawerOpen: !this.state.isDrawerOpen});
-  };
-
-  handleCloseProfile = () => {
-    this.setState({ profileOpen: false });
-  };
-
-  handleCloseFriends = () => {
-    this.setState({ friendsOpen: false });
   };
 
   render() {
     const { classes } = this.props;
-    const { profileOpen } = this.state;
-    const { friendsOpen } = this.state;
+
     const { isDrawerOpen } = this.state;
 
     const sideList = (
@@ -84,15 +69,21 @@ class ButtonAppBar extends React.Component {
         <MenuList>
             <MenuItem button 
               component={Link} to ="/Profile"
-              onClick={() => this.handleClickProfile()}>
+              onClick={() => this.handleClickIcon()}>
               <ListItemIcon> <AccountCircle/> </ListItemIcon>
               <ListItemText> Profile </ListItemText>       
             </MenuItem>
 
           <MenuItem button 
-            onClick={() => this.handleClickFriends()}>
+            onClick={() => this.handleClickIcon()}>
             <ListItemIcon> <Group/> </ListItemIcon>
             <ListItemText> Friends </ListItemText> 
+          </MenuItem>
+          <MenuItem button
+            component={Link} to ="/" 
+            onClick={() => this.handleClickIcon()}>
+            <ListItemIcon> <ExitToApp/> </ListItemIcon>
+            <ListItemText> Logout </ListItemText> 
           </MenuItem>
         </MenuList>
       </div>
