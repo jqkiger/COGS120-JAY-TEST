@@ -124,14 +124,11 @@ class Activity extends React.Component {
 	getDebtors = () =>{
 		var list = [];
 		var participants = this.props.data.participants;
-		console.log(participants);
 		for( var i=0; i<(participants.length);i++){
 			if(participants[i].paid == "0"){
 				list.push(participants[i]);
 			}
 		}
-		console.log("FUCK");
-		console.log(list);
 		return list;
 	};
 
@@ -142,6 +139,26 @@ class Activity extends React.Component {
 		if(this.props.data.owner == currentUser.name){
 			return true;
 		}
+		return false;
+	};
+
+
+	isNotComplete = () =>{
+		if(this.isOwner()){
+			if(this.props.data.complete == "0"){
+				return true;
+			}
+		}
+		else{
+			var participants = this.props.data.participants;
+			var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+			for( var i=0; i<(participants.length);i++){
+				if(participants[i].name == currentUser.name){
+					if(participants[i].paid == "1"){return false;}
+					return true;
+				}
+		}
+		}
 	};
 
 	render() {
@@ -151,8 +168,9 @@ class Activity extends React.Component {
 		let title;
 		const debtors = this.getDebtors();
 
+
 		//render pay and remind button if transaction is not complete
-		if (data.complete == "0") {
+		if (this.isNotComplete()) {
 			buttons =
 				this.isOwner() ? (
           <MuiThemeProvider theme={theme}>
@@ -179,9 +197,9 @@ class Activity extends React.Component {
 				);
 		}
 
-		if (data.complete == "0") {
+		if (this.isNotComplete()) {
 			title =
-				parseInt(data.lender) === 0 ? (
+				this.isOwner() ? (
 					<ListItemText
 						primary={
 							data.title +
@@ -200,7 +218,7 @@ class Activity extends React.Component {
 				);
 		} else {
 			title =
-				parseInt(data.lender) === 0 ? (
+				this.isOwner() ? (
 					<ListItemText
 						primary={
 							data.title +
