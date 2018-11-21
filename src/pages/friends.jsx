@@ -5,6 +5,7 @@ import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import TextField from '@material-ui/core/TextField'
 import AppBar from "../Components/AppBar.jsx";
+import FriendsList from "../Components/FriendsList.jsx";
 // import AutoComplete from '@material-ui/AutoComplete';
 
 
@@ -16,6 +17,7 @@ class Friends extends React.Component {
 			<div>
   			<AppBar />
   			<TextField/>
+        <FriendsList/>
 			</div>
 		);
   }
