@@ -31,7 +31,7 @@ const styles = theme => ({
     paddingTop: theme.spacing.unit * 0
   }
 });
- 
+
 //Returns incomplete activities
 function getActivities(){
 	var activities = JSON.parse(sessionStorage.getItem('activities'));
@@ -84,14 +84,14 @@ class ActivityList extends React.Component {
 			<div>
 				<div className={classes.top}>
 					{this.props.type == "active" ?
-		          		<List>{items.map(item =>(<Activity data={item} update={this.updateList}/>))}</List>	
+		          		<List>{items.map(item =>(<Activity data={item} update={this.updateList}/>))}</List>
 		          	:
-		          		<List>{history.map(item =>(<Activity data={item} update={this.updateList}/>))}</List>	
-		          	}		    	
-		        </div>	
-	        </div>	
+		          		<List>{history.map(item =>(<Activity data={item} update={this.updateList}/>))}</List>
+		          	}
+		        </div>
+	        </div>
 		);
-	
+
 	}
 }
 

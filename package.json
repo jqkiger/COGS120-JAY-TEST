@@ -4,10 +4,11 @@
   "homepage": "https://jqkiger.github.io/COGS120-JAY-TEST/",
   "private": true,
   "dependencies": {
-    "@material-ui/core": "latest",
+    "@material-ui/core": "^3.5.1",
     "@material-ui/icons": "^3.0.1",
     "ajv": "^6.5.4",
     "gh-pages": "^2.0.1",
+    "material-ui-search-bar": "^0.4.2",
     "prop-types": "latest",
     "react": "latest",
     "react-dom": "latest",

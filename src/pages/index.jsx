@@ -27,7 +27,8 @@ import AppBar from "../Components/AppBar.jsx";
 
 import Profile from "./profile";
 import Home from "./Home";
-import Login from "./Login"
+import Login from "./Login";
+import Friends from "./friends";
 
 const styles = theme => ({
   fab: {
@@ -49,7 +50,7 @@ class Index extends React.Component {
 
   render() {
     var json={
-    "list": 
+    "list":
     [
       { "id": 1,
                 "title": "TapEx",
@@ -59,7 +60,7 @@ class Index extends React.Component {
                 "total": "6.30",
                 "owner": "Yivonne Hou",
                 "complete": "0",
-                "participants": 
+                "participants":
                   [
                     {
                         "id": 1,
@@ -83,7 +84,7 @@ class Index extends React.Component {
                 "total": "33.60",
                 "owner": "Jonathan Kiger",
                 "complete": "0",
-                "participants": 
+                "participants":
                   [
                     {
                         "id": 1,
@@ -107,7 +108,7 @@ class Index extends React.Component {
                 "total": "12",
                 "owner": "Alex Mao",
                 "complete": "1",
-                "participants": 
+                "participants":
                   [
                     {
                         "id": 1,
@@ -130,7 +131,7 @@ class Index extends React.Component {
         [
           {"id":1, "name": "Yivonne Hou"},
           {"id":2, "name": "Alex Mao"}
-        ]   
+        ]
       },
       { "id": 3, "name": "Jane Doe", "u":"guest3", "pw":"pw3", "friends":
         [
@@ -165,10 +166,11 @@ class Index extends React.Component {
     return (
       <Router>
         <div>
-          
+
           <Route exact path="/" component={Login} />
           <Route path="/Home" component={Home}/>
           <Route path="/profile" component={Profile} />
+          <Route path="/friends" component={Friends}/>
         </div>
       </Router>
     );
