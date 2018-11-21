@@ -18,19 +18,46 @@ import ListItemText from "@material-ui/core/ListItemText";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Radio from "@material-ui/core/Radio";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import IconButton from "@material-ui/core/IconButton";
 
 import AddAPhoto from "@material-ui/icons/AddAPhoto";
 import AddIcon from "@material-ui/icons/Add";
 import withRoot from "../withRoot";
 import AppBar from "../Components/AppBar.jsx";
+import blue from '@material-ui/core/colors/blue';
+
+
+const theme = createMuiTheme({
+	overrides: {
+		MuiButton: {
+			root: {
+				background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+        border: 0,
+        boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+			},
+		},
+	},
+});
+
+const theme2 = createMuiTheme({
+	overrides: {
+		MuiButton: {
+			root: {
+        border: 0,
+        boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+				color: 'red',
+			},
+		},
+	},
+});
 
 function calculateOwed(data) {
 	var i;
 	var val = 0;
 	var arr = data.participants;
 	for (i = 0; i < arr.length; i++) {
-		if (parseInt(arr[i].paid) == 0) {
+		if (parseInt(arr[i].paid) == "0") {
 			val += parseFloat(arr[i].amount);
 		}
 	}
@@ -42,12 +69,13 @@ function calculatePaid(data) {
 	var val = 0;
 	var arr = data.participants;
 	for (i = 0; i < arr.length; i++) {
-		if (parseInt(arr[i].paid) == 1) {
+		if (parseInt(arr[i].paid) == "1") {
 			val += parseFloat(arr[i].amount);
 		}
 	}
 	return val.toFixed(2);
 }
+
 
 class Activity extends React.Component {
 	state = {
@@ -88,22 +116,63 @@ class Activity extends React.Component {
 
 	handlePay = index => {
 		console.log("handlePay");
+		console.log(this.props.data.id);
 		this.setState({ payOpen: false });
-		this.props.update(1);
+		this.props.update(index);
 	};
 
 	getDebtors = () =>{
 		var list = [];
 		var participants = this.props.data.participants;
-		console.log(participants);
 		for( var i=0; i<(participants.length);i++){
 			if(participants[i].paid == "0"){
 				list.push(participants[i]);
 			}
 		}
-		console.log("FUCK");
-		console.log(list);
 		return list;
+	};
+
+	isOwner = () =>{
+		var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+		console.log("I am hungry");
+		console.log(currentUser.name);
+		if(this.props.data.owner == currentUser.name){
+			return true;
+		}
+		return false;
+	};
+
+
+	isNotComplete = () =>{
+		if(this.isOwner()){
+			if(this.props.data.complete == "0"){
+				return true;
+			}
+		}
+		else{
+			var participants = this.props.data.participants;
+			var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+			for( var i=0; i<(participants.length);i++){
+				if(participants[i].name == currentUser.name){
+					if(participants[i].paid == "1"){return false;}
+					return true;
+				}
+		}
+		}
+	};
+
+	parseDebtors = () =>{
+		var participants = this.props.data.participants;
+		var str = ""
+		for( var i=0; i<(participants.length);i++){
+			if(i+1 == participants.length){
+				str = str + participants[i].name;
+			}
+			else{
+				str = str + participants[i].name + ",";
+			}
+		}
+		return str;
 	}
 
 	render() {
@@ -113,33 +182,38 @@ class Activity extends React.Component {
 		let title;
 		const debtors = this.getDebtors();
 
+
 		//render pay and remind button if transaction is not complete
-		if (data.complete == "0") {
+		if (this.isNotComplete()) {
 			buttons =
-				parseInt(data.lender) === 0 ? (
-					<Button
-						variant="contained"
-						color={"inherit"}
-						aria-label="remind"
-						onClick={() => this.handleClickRemind()}
-					>
-						Remind
-					</Button>
+				this.isOwner() ? (
+          <MuiThemeProvider theme={theme}>
+            <Button
+              variant="contained"
+              aria-label="remind"
+              onClick={() => this.handleClickRemind()}
+            >
+              Remind
+            </Button>
+					</MuiThemeProvider>
 				) : (
-					<Button
-						variant="contained"
-						color="secondary"
-						aria-label="pay"
-						onClick={() => this.handleClickPay()}
-					>
-						Pay
-					</Button>
+
+					<MuiThemeProvider theme={theme2}>
+            <Button
+              variant="contained"
+              color="primary"
+              aria-label="pay"
+              onClick={() => this.handleClickPay()}
+            >
+              Pay
+            </Button>
+					</MuiThemeProvider>
 				);
 		}
 
-		if (data.complete == "0") {
+		if (this.isNotComplete()) {
 			title =
-				parseInt(data.lender) === 0 ? (
+				this.isOwner() ? (
 					<ListItemText
 						primary={
 							data.title +
@@ -151,14 +225,14 @@ class Activity extends React.Component {
 					<ListItemText
 						primary={
 							data.title +
-							" - You owe $" +
+							" - You owe "+ data.owner +" $" +
 							data.participants[0].amount
 						}
 					/>
 				);
 		} else {
 			title =
-				parseInt(data.lender) === 0 ? (
+				this.isOwner() ? (
 					<ListItemText
 						primary={
 							data.title +
@@ -170,7 +244,7 @@ class Activity extends React.Component {
 					<ListItemText
 						primary={
 							data.title +
-							" - You paid $" +
+							" - You paid "+ data.owner +" $" +
 							data.participants[0].amount
 						}
 					/>
@@ -210,7 +284,7 @@ class Activity extends React.Component {
 						</Button>
 						<Button
 							variant="contained"
-							color="primary"
+							color="secondary"
 							onClick={() => this.handlePay(parseInt(data.id))}
 						>
 							Venmo
@@ -224,7 +298,7 @@ class Activity extends React.Component {
 					aria-labelledby="remind-dialog"
 				>
 					<DialogTitle id="remind-dialog">
-						Select the users  you need to remind to remind                           
+						&nbsp; &nbsp; &nbsp; Select the users you need to remind &nbsp; &nbsp; &nbsp; &nbsp;
 					</DialogTitle>
 					<DialogContent>
 						<DialogContent>
@@ -238,9 +312,9 @@ class Activity extends React.Component {
 										<ListItemText primary={value.name}>
 										</ListItemText>
 										<ListItemSecondaryAction>
-											<Button 
-												variant = "contained" 
-												color ="inherit" 
+											<Button
+												variant = "contained"
+												color ="inherit"
 												onClick={this.handleCloseRemind}>
 												Send Reminder
 											</Button>
@@ -261,7 +335,16 @@ class Activity extends React.Component {
 						{data.title}
 					</DialogTitle>
 					<DialogContent>
-						{data.date}: {data.description}
+						<DialogContentText>
+              				Lender: {data.owner}
+            			</DialogContentText>
+            			<DialogContentText>
+              				Debtors: {this.parseDebtors()}
+            			</DialogContentText>
+						<DialogContentText>
+              				{data.date}: {data.description}
+            			</DialogContentText>
+						
 					</DialogContent>
 					<DialogActions>{buttons}</DialogActions>
 				</Dialog>
