@@ -39,27 +39,21 @@ function getActivities() {
 		activities = activities.list;
 	}
 	for (var i = 0; i < activities.length; i++) {
-		console.log("wutface");
-		console.log(activities[0]);
 		if (!relevantActivity(activities[i])) {
 			activities.splice(i, 1);
 			i--;
 		}
 	}
 	activities = activities.filter(item => item.complete === "0");
-	console.log("rage");
-	console.log(activities);
+
 	return activities;
 }
 
 //returns if currentUser is involved in active activity
 function relevantActivity(activity) {
 	var currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
-	console.log("FUUUUUUCK");
-	console.log(currentUser.name);
-	console.log(activity.owner);
+
 	if (currentUser.name == activity.owner) {
-		console.log("Dammit");
 		return true;
 	}
 
@@ -79,18 +73,14 @@ function relevantActivity(activity) {
 //returns if currentUser is involved in any activity
 function relevantHistory(activity) {
 	var currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
-	console.log("FUUUUUUCK");
-	console.log(currentUser.name);
-	console.log(activity.owner);
+
 	if (currentUser.name == activity.owner) {
-		console.log("Dammit");
 		return true;
 	}
 
 	var participants = activity.participants;
 	for (var i = 0; i < participants.length; i++) {
 		if (participants[i].name == currentUser.name) {
-			console.log("Fuggit");
 			return true;
 		}
 	}
@@ -113,8 +103,7 @@ function getHistory() {
 	}
 
 	for (var i = 0; i < history.length; i++) {
-		console.log("wutface");
-		console.log(history[0]);
+		
 		if (!relevantHistory(history[i])) {
 			history.splice(i, 1);
 			i--;
@@ -133,11 +122,9 @@ function getAllHistory() {
 }
 
 function updatePayment(index) {
-	console.log("index");
-	console.log(index);
+
 	var activities = getAllHistory();
-	console.log("history");
-	console.log(activities);
+	
 	var activity = activities[index - 1];
 	var currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
 	var participants = activity.participants;
@@ -148,8 +135,7 @@ function updatePayment(index) {
 			break;
 		}
 	}
-	console.log("participants");
-	console.log(participants);
+
 	activity.participants = participants;
 
 	for (var i = 0; i < participants.length; i++) {
@@ -162,8 +148,7 @@ function updatePayment(index) {
 		}
 	}
 
-	console.log("activity");
-	console.log(activity);
+
 
 	activities[index - 1] = activity;
 
@@ -175,10 +160,8 @@ class ActivityList extends React.Component {
 
 	//UpdateList called by child when completing payment
 	updateList = index => {
-		console.log("updateList");
-		console.log(index);
+	
 		var newActivities = updatePayment(index);
-		console.log(newActivities);
 		sessionStorage.setItem("activities", JSON.stringify(newActivities));
 		this.setState(this.state);
 		sessionStorage.setItem("called", "1");

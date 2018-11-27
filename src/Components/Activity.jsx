@@ -134,8 +134,6 @@ class Activity extends React.Component {
 
 	isOwner = () =>{
 		var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
-		console.log("I am hungry");
-		console.log(currentUser.name);
 		if(this.props.data.owner == currentUser.name){
 			return true;
 		}

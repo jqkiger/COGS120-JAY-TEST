@@ -68,11 +68,12 @@ const styles = theme => ({
 
 const inputProps = {
   step: 0.01,
-  startAdornment: <InputAdornment position="start">Kg</InputAdornment>
+  startAdornment: <InputAdornment position="start">$</InputAdornment>
 };
 
 const options = ["Food", "Recreation", "Shopping", "Bills", "Other"];
 
+const temp = []
 
 function getFriends(){
 	var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
@@ -100,6 +101,10 @@ class Home extends React.Component {
     description: "",
     checked: [],
     title: "",
+    charges: [],
+    ownerPay: 0,
+    sum: 0
+
   };
 
   handleClick = () => {
@@ -121,7 +126,10 @@ class Home extends React.Component {
       checked: [],
       amount: '',
       title: "",
-      people: ''
+      people: '',
+      charges:[],
+      ownerPay: 0,
+      sum: 0
     });
   };
 
@@ -145,12 +153,28 @@ class Home extends React.Component {
     var added = this.state.checked.length;
     if(added == ppl){
       this.setState({ confirmationOpen: true, pageTwoOpen: false });
+      var charge = this.calculateCharge();
+      const {charges} = this.state;
+      var newCharges = [...charges]
+      for (var i=0; i<this.state.people; i++){
+        newCharges[i] = charge
+      }
+      this.setState({charges: newCharges, ownerPay:charge})
     }
   };
 
   handleCreateActivity = () => {
-    this.updateData();
-    this.setState({ confirmationOpen: false });
+    var sum = 0
+    for(var i=0; i<this.state.people;i++){
+      sum += parseFloat(this.state.charges[i])
+    }
+    sum = sum + parseFloat(this.state.ownerPay)
+    console.log("sum")
+    console.log(sum)
+    if(sum === parseFloat(this.state.amount)){
+      this.updateData();
+      this.handleCancel();
+    }
   };
 
   handleChangeDescription = (event) => {
@@ -168,6 +192,19 @@ class Home extends React.Component {
 
   handleChangePeople = (event) => {
     this.setState({ people: event.target.value });
+  };
+
+  handleChangeOwnerPay = (event) => {
+    this.setState({ ownerPay: event.target.value });
+  };
+
+  handleChangeCharge =(n, event) => {
+    var ind = n.id-1
+    const {charges} = this.state;
+    const newCharges = [...charges]
+    newCharges[ind] = parseFloat(event.target.value).toFixed(2);
+    this.setState({charges: newCharges})
+    console.log(this.state.charges)
   };
 
   handleToggle = val=> () => {
@@ -203,6 +240,15 @@ class Home extends React.Component {
       });
     }
   };
+
+  getSum(){
+    var sum = 0
+    for(var i=0; i<this.state.people;i++){
+      sum += parseFloat(this.state.charges[i])
+    }
+    sum = sum + parseFloat(this.state.ownerPay)
+    return sum
+  }
  
 
   calculateCharge(){
@@ -217,13 +263,13 @@ class Home extends React.Component {
     if(!this.state.confirmationOpen){
       return peopleList;
     }
-    console.log(friends);
-    console.log(this.state.checked);
-    console.log(friends[0].name)
-    var charge = this.calculateCharge();
+    //console.log(friends);
+    //console.log(this.state.checked);
+    //console.log(friends[0].name)
     for(var i=0; i<this.state.people;i++){
       var ind = this.state.checked[i];
       var fname = friends[ind-1].name;
+      var charge = this.state.charges[i]
       peopleList.push({id:(i+1), name:fname, amount: charge, paid: "0"})
     }
     console.log(peopleList);
@@ -246,9 +292,8 @@ class Home extends React.Component {
                 complete: "0",
                 participants: peopleList
             }
-    console.log(data);
+    console.log(data)
     activities.push(data);
-    console.log(activities);
     sessionStorage.setItem('activities', JSON.stringify(activities));
     sessionStorage.setItem('called', "1");
     this.setState(this.state);
@@ -266,6 +311,7 @@ class Home extends React.Component {
       people,
       checked,
       title,
+      charges,
     } = this.state;
     const friends = getFriends();
     return (
@@ -290,7 +336,6 @@ class Home extends React.Component {
           
           <DialogContent>
           <List dense>
-          {console.log(friends)}
           {friends.map(value => (
             <ListItem key={value} >
               <Avatar alt="Remy Sharp" src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png" />
@@ -324,7 +369,7 @@ class Home extends React.Component {
           <DialogTitle id="form-dialog-title">
             <Toolbar>
               <Typography variant="h6" color="inherit" className={classes.root}>
-                Confirmation split activity Page(Even split for now)
+                Confirmation split activity Page
               </Typography>
               <Button className={classes.closeButton}color="inherit" onClick={this.handleCancel} aria-label="Close">
                 X
@@ -333,14 +378,43 @@ class Home extends React.Component {
           </DialogTitle>
           <DialogContent>
           <List dense>
-          {this.getPeopleAdded().map(value => (
-            <ListItem key={value} >
-              <Avatar alt="Remy Sharp" src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png" />
-              <ListItemText primary={value.name +" is being charged $"+this.calculateCharge()} />
+          {this.getPeopleAdded().map( n=> (
+            <ListItem key={n} >
+              <Avatar alt="Remy Sharp" src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png" />            
+              <ListItemText primary={n.name +" is being charged "} />
+              <FormControl >
+                <Input
+                  type="number"
+
+                  id="adornment-amount"
+                  value={this.state.charges[n.id-1]}
+                  onChange={(event) =>this.handleChangeCharge(n, event)}
+                  inputProps={inputProps}
+                  startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                />
+              </FormControl>
             </ListItem>
           ))}
+            <ListItem>
+              <Avatar alt="Remy Sharp" src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png" />            
+              <ListItemText primary={"You Pay "} />
+              <FormControl >
+                <Input
+                  type="number"
+
+                  id="adornment-amount"
+                  value={this.state.ownerPay}
+                  onChange={this.handleChangeOwnerPay}
+                  inputProps={inputProps}
+                  startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                />
+              </FormControl>
+            </ListItem>
           </List>
           </DialogContent>
+          <DialogContentText>
+                Total amount ${this.getSum()} of ${parseFloat(this.state.amount)}
+          </DialogContentText>
           <DialogActions>
              <Button onClick={this.handleBack} color="primary">
               Back
