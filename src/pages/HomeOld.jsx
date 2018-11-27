@@ -20,23 +20,12 @@ import Radio from "@material-ui/core/Radio";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import IconButton from "@material-ui/core/IconButton";
 import Checkbox from '@material-ui/core/Checkbox';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import Toolbar from '@material-ui/core/Toolbar';
-
-
-
-
 
 import AddAPhoto from "@material-ui/icons/AddAPhoto";
 import AddIcon from "@material-ui/icons/Add";
 import withRoot from "../withRoot";
 import AppBar from "../Components/AppBar.jsx";
 import ActivityList from "../Components/ActivityList.jsx";
-import CloseIcon from '@material-ui/icons/Close';
-
 
 const styles = theme => ({
   fab: {
@@ -50,25 +39,11 @@ const styles = theme => ({
   top: {
     textAlign: "center",
     paddingTop: theme.spacing.unit * 0
-  },
-  dialogT:{
-    minHeight: '80vh',
-    maxHeight: '80vh',
-  },
-   root: {
-    flexGrow: 1,
-    textAlign: "center",
-  },
-  closeButton: {
-    marginTop: -75,
-    marginRight: -60
-  },
+  }
 });
 
-
 const inputProps = {
-  step: 0.01,
-  startAdornment: <InputAdornment position="start">Kg</InputAdornment>
+  step: 0.01
 };
 
 const options = ["Food", "Recreation", "Shopping", "Bills", "Other"];
@@ -92,14 +67,18 @@ function getHistory(){
     return history;
 }
 
-class Home extends React.Component {
+class HomeOld extends React.Component {
   state = {
     open: false,
-    pageTwoOpen: false,
-    confirmationOpen: false,
     description: "",
     checked: [],
     title: "",
+  };
+
+  handleClose = () => {
+    this.setState({
+      open: false
+    });
   };
 
   handleClick = () => {
@@ -113,16 +92,7 @@ class Home extends React.Component {
   };
 
   handleCancel = () => {
-    this.setState({ 
-      open: false, 
-      pageTwoOpen: false, 
-      confirmationOpen: false,
-      description: "",
-      checked: [],
-      amount: '',
-      title: "",
-      people: ''
-    });
+    this.setState({ open: false, pageTwoOpen: false, confirmationOpen: false });
   };
 
   handleOk = () => {
@@ -188,22 +158,6 @@ class Home extends React.Component {
       checked: newChecked,
     });
   };
-
-  handleBack = () => {
-    if(this.state.pageTwoOpen){
-      this.setState({ 
-        open: true, 
-        pageTwoOpen: false, 
-      });
-    }
-    else if(this.state.confirmationOpen){
-      this.setState({ 
-        pageTwoOpen: true , 
-        confirmationOpen: false, 
-      });
-    }
-  };
- 
 
   calculateCharge(){
     var total = parseFloat(this.state.amount);
@@ -272,27 +226,18 @@ class Home extends React.Component {
       <div>
       <AppBar/>
         <Dialog
-          maxWidth= 'md'
           open={this.state.pageTwoOpen}
           onClose={this.handleCancel}
           aria-labelledby="add-people-dialog"
         >
-          <DialogTitle id="form-dialog-title">
-            <Toolbar>
-              <Typography variant="h6" color="inherit" className={classes.root}>
-                Add people to split activity Page
-              </Typography>
-              <Button className={classes.closeButton}color="inherit" onClick={this.handleCancel} aria-label="Close">
-                X
-              </Button>
-            </Toolbar>
+          <DialogTitle id="add-people-dialog">
+            Add people to split activity Page
           </DialogTitle>
-          
           <DialogContent>
           <List dense>
           {console.log(friends)}
           {friends.map(value => (
-            <ListItem key={value} >
+            <ListItem key={value} button>
               <Avatar alt="Remy Sharp" src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png" />
               <ListItemText primary={value.name} />
               <ListItemSecondaryAction>
@@ -306,8 +251,8 @@ class Home extends React.Component {
         </List>
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.handleBack} color="primary">
-              Back
+            <Button onClick={this.handleCancel} color="primary">
+              Cancel
             </Button>
             <Button onClick={this.handleConfirmation} color="primary">
               Next
@@ -316,25 +261,17 @@ class Home extends React.Component {
         </Dialog>
 
         <Dialog
-          maxWidth= 'md'
           open={this.state.confirmationOpen}
           onClose={this.handleCancel}
           aria-labelledby="confirmation-dialog"
         >
-          <DialogTitle id="form-dialog-title">
-            <Toolbar>
-              <Typography variant="h6" color="inherit" className={classes.root}>
-                Confirmation split activity Page(Even split for now)
-              </Typography>
-              <Button className={classes.closeButton}color="inherit" onClick={this.handleCancel} aria-label="Close">
-                X
-              </Button>
-            </Toolbar>
+          <DialogTitle id="confirmation-dialog">
+            Confirmation split activity Page(Even split for now)
           </DialogTitle>
           <DialogContent>
           <List dense>
           {this.getPeopleAdded().map(value => (
-            <ListItem key={value} >
+            <ListItem key={value} button>
               <Avatar alt="Remy Sharp" src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png" />
               <ListItemText primary={value.name +" is being charged $"+this.calculateCharge()} />
             </ListItem>
@@ -342,8 +279,8 @@ class Home extends React.Component {
           </List>
           </DialogContent>
           <DialogActions>
-             <Button onClick={this.handleBack} color="primary">
-              Back
+            <Button onClick={this.handleCancel} color="primary">
+              Cancel
             </Button>
             <Button onClick={this.handleCreateActivity} color="primary">
               Confirm
@@ -366,21 +303,13 @@ class Home extends React.Component {
         </div>
         <div>
           <Dialog
-            maxWidth= 'md'
             open={this.state.open}
-            onClose={this.handleCancel}
+            onClose={this.handleClose}
             aria-labelledby="form-dialog-title"
           >
-          <DialogTitle id="form-dialog-title">
-            <Toolbar>
-              <Typography variant="h6" color="inherit" className={classes.root}>
-                Create Split Activity
-              </Typography>
-              <Button className={classes.closeButton}color="inherit" onClick={this.handleCancel} aria-label="Close">
-                X
-              </Button>
-            </Toolbar>
-          </DialogTitle>
+            <DialogTitle id="form-dialog-title">
+              Create Split Activity
+            </DialogTitle>
             <DialogContent>
               <DialogContentText>
                 To split a purchase please enter a description, the total cost,
@@ -406,18 +335,17 @@ class Home extends React.Component {
                 fullWidth
                 onChange={this.handleChangeDescription}
               />
-              <FormControl fullWidth>
-                <InputLabel  htmlFor="adornment-amount">Amount</InputLabel>
-                <Input
-                  type="number"
-
-                  id="adornment-amount"
-                  value={this.state.amount}
-                  onChange={this.handleChangeAmount}
-                  inputProps={inputProps}
-                  startAdornment={<InputAdornment position="start">$</InputAdornment>}
-                />
-              </FormControl>
+              <TextField
+                autoFocus
+                value={this.state.amount}
+                margin="dense"
+                id="standard-required"
+                label="Total Cost"
+                type="number"
+                inputProps={inputProps}
+                fullWidth
+                onChange={this.handleChangeAmount}
+              />
               <TextField
                 autoFocus
                 value={this.state.people}
@@ -456,8 +384,8 @@ class Home extends React.Component {
                 Add a picture of receipt
               </Button>
             </DialogContent>*/}
-            <DialogActions >
-              <Button onClick={this.handleCancel} color="primary">
+            <DialogActions>
+              <Button onClick={this.handleClose} color="primary">
                 Cancel
               </Button>
               <Button onClick={this.handleOk} color="primary">
@@ -471,9 +399,9 @@ class Home extends React.Component {
   }
 }
 
-Home.propTypes = {
+HomeOld.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-// export default Home;
-export default withRoot(withStyles(styles)(Home));
+// export default HomeOld;
+export default withRoot(withStyles(styles)(HomeOld));

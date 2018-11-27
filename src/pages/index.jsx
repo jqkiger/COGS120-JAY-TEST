@@ -27,6 +27,7 @@ import AppBar from "../Components/AppBar.jsx";
 
 import Profile from "./profile";
 import Home from "./Home";
+import HomeOld from "./HomeOld";
 import Login from "./Login"
 
 const styles = theme => ({
@@ -166,8 +167,8 @@ class Index extends React.Component {
     return (
       <Router>
         <div>
-          
           <Route exact path="/" component={Login} />
+          <Route path="/HomeOld" component={HomeOld}/>
           <Route path="/Home" component={Home}/>
           <Route path="/profile" component={Profile} />
         </div>
