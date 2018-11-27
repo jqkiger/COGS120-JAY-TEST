@@ -29,6 +29,7 @@ import Profile from "./profile";
 import Home from "./Home";
 import Login from "./Login";
 import Friends from "./friends";
+import HomeOld from "./HomeOld";
 
 const styles = theme => ({
   fab: {
@@ -162,13 +163,15 @@ class Index extends React.Component {
       sessionStorage.setItem('count', 0);
       sessionStorage.setItem('users', JSON.stringify(json2));
       sessionStorage.setItem('activities', JSON.stringify(json));
+      var users = JSON.parse(sessionStorage.getItem('users')).list;
+      sessionStorage.setItem('currentUser', JSON.stringify(users[4]))
     }
 
     return (
       <Router>
         <div>
-
           <Route exact path="/" component={Login} />
+          <Route path="/HomeOld" component={HomeOld}/>
           <Route path="/Home" component={Home}/>
           <Route path="/profile" component={Profile} />
           <Route path="/friends" component={Friends}/>

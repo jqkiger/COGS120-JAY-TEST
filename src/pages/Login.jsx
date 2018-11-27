@@ -21,6 +21,13 @@ import MenuList from "@material-ui/core/MenuList";
 import MenuItem from "@material-ui/core/MenuItem";
 import Input from '@material-ui/core/Input';
 import TextField from '@material-ui/core/TextField';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+
+
 
 import MenuIcon from "@material-ui/icons/Menu";
 import NotificationsIcon from "@material-ui/icons/Notifications";
@@ -55,14 +62,16 @@ const styles = theme =>( {
     display: 'flex',
     flexWrap: 'wrap',
   },
+
 });
 
 
 class Login extends React.Component{
   state = {
-    uname: 'username',
-    pw: 'password',
-    invalid: false
+    uname: '',
+    pw: '',
+    invalid: false,
+    showPassword: false
   };
 
   handleChange = name => event =>{
@@ -90,6 +99,10 @@ class Login extends React.Component{
         return true;
       }
     }
+  };
+
+  handleClickShowPassword = () => {
+    this.setState(state => ({ showPassword: !state.showPassword }));
   };
 
 
@@ -150,22 +163,42 @@ class Login extends React.Component{
             </Toolbar>
           </AppBar>
         </div>
+
         <Typography variant="h6" color="inherit" className={classes.grow}>
-          <TextField
-            value={this.state.uname}
-            onChange={this.handleChange('uname')}
-            margin = "normal"
-          />
+          <FormControl className={classes.grow}>
+
+
+            <InputLabel htmlFor="adornment-username">Username</InputLabel>
+            <Input
+              id="adornment-username"
+              value={this.state.uname}
+              onChange={this.handleChange('uname')}
+            />
+          </FormControl>
         </Typography>
 
         <Typography variant="h6" color="inherit" className={classes.grow}>
-          <TextField
-            value={this.state.pw}
-            onChange={this.handleChange('pw')}
-            margin = "normal"
-            type="password"
-          />
+          <FormControl className={classes.grow}>
+            <InputLabel htmlFor="adornment-password">Password </InputLabel>
+            <Input
+              id="adornment-password"
+              type={this.state.showPassword ? 'text' : 'password'}
+              value={this.state.pw}
+              onChange={this.handleChange('pw')}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="Toggle password visibility"
+                    onClick={this.handleClickShowPassword}
+                  >
+                    {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+          </FormControl>
         </Typography>
+
 
         {this.checkCredentials() ? correctLogin : incorrectLogin}
       
