@@ -68,23 +68,24 @@ class ButtonAppBar extends React.Component {
     const sideList = (
       <div className={classes.list}>
         <MenuList>
-            <MenuItem button 
+            <MenuItem button
               component={Link} to ="/Profile"
               onClick={() => this.handleClickIcon()}>
               <ListItemIcon> <AccountCircle/> </ListItemIcon>
-              <ListItemText> Profile </ListItemText>       
+              <ListItemText> Profile </ListItemText>
             </MenuItem>
 
-          <MenuItem button 
-            onClick={() => this.handleClickIcon()}>
+          <MenuItem button
+            component={Link} to ="/Friends"
+            onClick={() => this.handleClickFriends()}>
             <ListItemIcon> <Group/> </ListItemIcon>
-            <ListItemText> Friends </ListItemText> 
+            <ListItemText> Friends </ListItemText>
           </MenuItem>
           <MenuItem button
-            component={Link} to ="/" 
+            component={Link} to ="/"
             onClick={() => this.handleClickIcon()}>
             <ListItemIcon> <ExitToApp/> </ListItemIcon>
-            <ListItemText> Logout </ListItemText> 
+            <ListItemText> Logout </ListItemText>
           </MenuItem>
         </MenuList>
       </div>
@@ -119,28 +120,28 @@ class ButtonAppBar extends React.Component {
             >
               <MenuIcon />
             </Button>
-              
+
             <Button
               component={Link} to ="/Home"
-              color="inherit"  
-              className={classes.grow} 
-              disableRipple="true" 
+              color="inherit"
+              className={classes.grow}
+              disableRipple="true"
               disableTouchRipple="true"
               focusRipple="true"
             >
               <Typography variant="h6" color="inherit" className={classes.grow}>
-                Splitmo 
+                Splitmo
               </Typography>
             </Button>
-            
+
           </Toolbar>
         </AppBar>
 
-        <Drawer 
+        <Drawer
           anchor='left'
           open={this.state.isDrawerOpen}
           onClose={this.toggleDrawer(false)}
-        > 
+        >
           <div
             tabIndex={0}
             role="button"
@@ -148,8 +149,8 @@ class ButtonAppBar extends React.Component {
             onKeyDown={this.toggleDrawer(false)}
           />
           {sideList}
-          
-        </Drawer> 
+
+        </Drawer>
       </div>
     );
   }
