@@ -162,6 +162,8 @@ class Index extends React.Component {
       sessionStorage.setItem('count', 0);
       sessionStorage.setItem('users', JSON.stringify(json2));
       sessionStorage.setItem('activities', JSON.stringify(json));
+      var users = JSON.parse(sessionStorage.getItem('users')).list;
+      sessionStorage.setItem('currentUser', JSON.stringify(users[4]))
     }
 
     return (
