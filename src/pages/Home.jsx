@@ -202,7 +202,7 @@ class Home extends React.Component {
     var ind = n.id-1
     const {charges} = this.state;
     const newCharges = [...charges]
-    newCharges[ind] = parseFloat(event.target.value).toFixed(2);
+    newCharges[ind] = parseFloat(event.target.value);
     this.setState({charges: newCharges})
     console.log(this.state.charges)
   };
