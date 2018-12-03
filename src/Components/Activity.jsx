@@ -302,23 +302,22 @@ class Activity extends React.Component {
 					</DialogTitle>
 					<DialogContent>
 						<DialogContent>
-							<List dense>
+							<List dense = {true}>
 								{debtors.map(value => (
 									<ListItem key={value} button>
 										<Avatar
 											alt="Remy Sharp"
 											src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png"
 										/>
-										<ListItemText primary={value.name}>
-										</ListItemText>
-										<ListItemSecondaryAction>
+										<ListItemText primary={value.name}/>
+										
 											<Button
 												variant = "contained"
 												color ="inherit"
+												size = "small"
 												onClick={this.handleCloseRemind}>
 												Send Reminder
 											</Button>
-										</ListItemSecondaryAction>
 									</ListItem>
 								))}
 							</List>
