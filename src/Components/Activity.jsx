@@ -294,6 +294,8 @@ class Activity extends React.Component {
 					open={this.state.remindOpen}
 					onClose={this.handleCloseRemind}
 					aria-labelledby="remind-dialog"
+					fullWidth={true}
+					maxWidth = {'md'}
 				>
 					<DialogTitle id="remind-dialog">
 						&nbsp; &nbsp; &nbsp; Select the users you need to remind &nbsp; &nbsp; &nbsp; &nbsp;
