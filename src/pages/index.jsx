@@ -121,7 +121,7 @@ class Index extends React.Component {
             }
     ]};
 
-    var json2=[
+    var json2={"list":[
       { "id": 1, "name": "Yvonne Hou", "u":"guest5", "pw":"pw5", "friends":
         [
           {"id":1, "name": "Jonathan Kiger"},
@@ -155,7 +155,7 @@ class Index extends React.Component {
         ]
 
       }
-    ];
+    ]};
 
 
     if(sessionStorage.getItem('count')==null){
@@ -163,7 +163,8 @@ class Index extends React.Component {
       sessionStorage.setItem('count', 0);
       sessionStorage.setItem('users', JSON.stringify(json2));
       sessionStorage.setItem('activities', JSON.stringify(json));
-      var users = JSON.parse(sessionStorage.getItem('users'));
+      var users = JSON.parse(sessionStorage.getItem('users')).list;
+      sessionStorage.setItem('users', JSON.stringify(users));
       sessionStorage.setItem('currentUser', JSON.stringify(users[4]))
     }
 
