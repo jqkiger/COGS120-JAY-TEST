@@ -39,7 +39,9 @@ function getNotFriends() {
   console.log(friends)
   var notfriends =[]
   var users = JSON.parse(sessionStorage.getItem('users'));
-  console.log(users)
+  if(!Array.isArray(users)){
+      users=users.list
+    }
   for(var i=0; i<users.length ; i++){
   	var contains = friends.some(item => item.name === users[i].name)
   	if (!contains && currentUser.name != users[i].name)
@@ -63,6 +65,9 @@ class Friends extends React.Component {
   		var friends = currentUser.friends;
   		var len = friends.length;
   		var users = JSON.parse(sessionStorage.getItem('users'));
+  		if(!Array.isArray(users)){
+      		users=users.list
+    	}
   		friends.push({id:(len+1), name:friend});
   		currentUser.friends = friends;
   		users[id-1] = currentUser;
