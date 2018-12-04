@@ -307,7 +307,7 @@ class Activity extends React.Component {
 											alt="Remy Sharp"
 											src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png"
 										/>
-										<ListItemText primary={value.name}/>
+										<ListItemText primary={value.name + " owes $" + value.amount}/>
 										
 											<Button
 												variant = "contained"
