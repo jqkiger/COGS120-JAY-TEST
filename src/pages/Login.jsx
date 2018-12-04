@@ -91,7 +91,7 @@ class Login extends React.Component{
   };
 
   checkCredentials = () => {
-    var users = JSON.parse(sessionStorage.getItem('users')).list;
+    var users = JSON.parse(sessionStorage.getItem('users'));
     for(var i=0; i<users.length;i++){
       console.log(users[i]);
       if(users[i].u == this.state.uname && users[i].pw == this.state.pw){

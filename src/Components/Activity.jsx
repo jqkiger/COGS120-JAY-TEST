@@ -294,8 +294,6 @@ class Activity extends React.Component {
 					open={this.state.remindOpen}
 					onClose={this.handleCloseRemind}
 					aria-labelledby="remind-dialog"
-					fullWidth={true}
-					maxWidth = {'md'}
 				>
 					<DialogTitle id="remind-dialog">
 						&nbsp; &nbsp; &nbsp; Select the users you need to remind &nbsp; &nbsp; &nbsp; &nbsp;
@@ -304,7 +302,7 @@ class Activity extends React.Component {
 						<DialogContent>
 							<List dense = {true}>
 								{debtors.map(value => (
-									<ListItem key={value} button>
+									<ListItem key={value}>
 										<Avatar
 											alt="Remy Sharp"
 											src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png"

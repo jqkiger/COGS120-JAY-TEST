@@ -77,7 +77,7 @@ class ButtonAppBar extends React.Component {
 
           <MenuItem button
             component={Link} to ="/Friends"
-            onClick={() => this.handleClickFriends()}>
+            onClick={() => this.handleClickIcon()}>
             <ListItemIcon> <Group/> </ListItemIcon>
             <ListItemText> Friends </ListItemText>
           </MenuItem>
