@@ -387,7 +387,7 @@ class Home extends React.Component {
               <FormControl className={classes.formControl}>
                 <Input
                   type="number"
-                  style={{width:75}}
+                  style={{width:30}}
                   id="adornment-amount"
                   value={this.state.charges[n.id-1]}
                   onChange={(event) =>this.handleChangeCharge(n, event)}
@@ -403,7 +403,7 @@ class Home extends React.Component {
               <FormControl className={classes.formControl} >
                 <Input
                   type="number"
-                  style={{width:75}}
+                  style={{width:30}}
                   id="adornment-amount"
                   value={this.state.ownerPay}
                   onChange={this.handleChangeOwnerPay}
@@ -442,8 +442,9 @@ class Home extends React.Component {
         </div>
         <div>
           <Dialog
-            fullWidth={true}
+            
             maxWidth= 'sm'
+            scroll={'body'}
             open={this.state.open}
             onClose={this.handleCancel}
             aria-labelledby="form-dialog-title"
