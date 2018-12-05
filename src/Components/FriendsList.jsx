@@ -25,6 +25,19 @@ function getFriends() {
 
 class FriendsList extends React.Component {
 
+  getPic = name =>{
+    var users = JSON.parse(sessionStorage.getItem('users'));
+
+    var index = 0
+      for (var i=0; i<users.length;i++){
+        if(users[i].name === name){
+          index = i
+          break;
+        }
+      }
+      return  users[index].pic;
+  }
+
   render() {
     const { classes } = this.props;
     const friends = getFriends();
@@ -36,7 +49,7 @@ class FriendsList extends React.Component {
           <ListItem key={value}>
             <Avatar
               alt="Remy Sharp"
-              src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png"
+              src={this.getPic(value.name)}
             />
             <ListItemText primary={value.name}/>
           </ListItem>

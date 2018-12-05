@@ -104,33 +104,32 @@ class Friends extends React.Component {
   render() {
   	const { classes } = this.props;
   	const notfriends = getNotFriends();
-    return(
+  	let notFriendsList;
 
-			<div>
-  				<AppBar />
-        		<FriendsList/>
-        		<Typography variant="h6" color="inherit" className={classes.grow}>
-        		<Button
-        			color= "inherit"
-        			variant = "contained"
-        			onClick={this.handleAdd}
-        		>
-        		Add Friend
-        		</Button>
-        		</Typography>
+			notFriendsList =
+				notfriends.length===0 ? (
+		        <Dialog
+						open={this.state.add}
+						onClose={this.handleCloseAdd}
+				>
+
+					<DialogTitle id="pay-dialog">No Friends to Add</DialogTitle>
+				</Dialog>
+				) : (
 
 				<Dialog
 						open={this.state.add}
 						onClose={this.handleCloseAdd}
 				>
-				<DialogTitle id="pay-dialog">Add Friends</DialogTitle>
+
+					<DialogTitle id="pay-dialog">Add Friends</DialogTitle>
 					<DialogContent>
 							<List dense = {true}>
 								{getNotFriends().map(value => (
 									<ListItem key={value}>
 										<Avatar
 											alt="Remy Sharp"
-											src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png"
+											src= {value.pic}
 										/>
 										<ListItemText primary={value.name}/>
 										
@@ -146,6 +145,25 @@ class Friends extends React.Component {
 							</List>
 					</DialogContent>
 				</Dialog>
+				);
+
+    return(
+
+			<div>
+  				<AppBar />
+  				{notFriendsList}
+        		<FriendsList/>
+        		<Typography variant="h6" color="inherit" className={classes.grow}>
+        		<Button
+        			color= "inherit"
+        			variant = "contained"
+        			onClick={this.handleAdd}
+        		>
+        		Add Friend
+        		</Button>
+        		</Typography>
+
+				
 			</div>
 		);
   }

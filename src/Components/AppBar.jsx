@@ -23,12 +23,13 @@ import MenuItem from "@material-ui/core/MenuItem";
 import MenuIcon from "@material-ui/icons/Menu";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import AccountCircle from "@material-ui/icons/AccountCircle";
+import Home from "@material-ui/icons/Home";
 import Group from "@material-ui/icons/Group";
 import ExitToApp from "@material-ui/icons/ExitToApp"
 
 const styles = {
   root: {
-    flexGrow: 1,
+
     textAlign: "center",
   },
   grow: {
@@ -68,6 +69,12 @@ class ButtonAppBar extends React.Component {
     const sideList = (
       <div className={classes.list}>
         <MenuList>
+            <MenuItem button
+              component={Link} to ="/Home"
+              onClick={() => this.handleClickIcon()}>
+              <ListItemIcon> <Home/> </ListItemIcon>
+              <ListItemText> Home </ListItemText>
+            </MenuItem>
             <MenuItem button
               component={Link} to ="/Profile"
               onClick={() => this.handleClickIcon()}>
@@ -111,7 +118,7 @@ class ButtonAppBar extends React.Component {
     return (
       <div className={classes.root}>
         <AppBar position="static" title ="Splitmo" >
-          <Toolbar>
+          <Toolbar style={{justifyContent: 'center'}}>
             <Button
               className={classes.menuButton}
               color="inherit"
@@ -129,7 +136,7 @@ class ButtonAppBar extends React.Component {
               disableTouchRipple="true"
               focusRipple="true"
             >
-              <Typography variant="h6" color="inherit" className={classes.grow}>
+              <Typography variant="h6" color="inherit">
                 Splitmo
               </Typography>
             </Button>

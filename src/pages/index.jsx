@@ -122,37 +122,37 @@ class Index extends React.Component {
     ]};
 
     var json2={"list":[
-      { "id": 1, "name": "Yvonne Hou", "u":"guest5", "pw":"pw5", "friends":
+      { "id": 1, "name": "Yvonne Hou", "u":"guest5", "pw":"pw5","email":"guest5@ucsd.edu", "number":"(555)555-5555" , "friends":
         [
           {"id":1, "name": "Jonathan Kiger"},
           {"id":2, "name": "Alex Mao"}
-        ]
+        ], "pic" : "http://randomuser.me/api/portraits/women/17.jpg"
       },
-      { "id": 2, "name": "Alex Mao", "u":"guest4", "pw":"pw4", "friends":
+      { "id": 2, "name": "Alex Mao", "u":"guest4", "pw":"pw4","email":"guest4@ucsd.edu", "number":"(444)444-4444" , "friends":
         [
           {"id":1, "name": "Yvonne Hou"},
           {"id":2, "name": "Jonathan Kiger"}
-        ]
+        ], "pic" : "http://randomuser.me/api/portraits/men/67.jpg"
       },
-      { "id": 3, "name": "Jane Doe", "u":"guest3", "pw":"pw3", "friends":
+      { "id": 3, "name": "Jane Doe", "u":"guest3", "pw":"pw3","email":"guest3@ucsd.edu", "number":"(333)333-3333" , "friends":
         [
           {"id":1, "name": "Jonathan Kiger"}
-        ]
+        ], "pic" : "http://randomuser.me/api/portraits/women/57.jpg"
 
       },
-      { "id": 4, "name": "John Doe", "u":"guest2", "pw":"pw2", "friends":
+      { "id": 4, "name": "John Doe", "u":"guest2", "pw":"pw2","email":"guest2@ucsd.edu", "number":"(222)222-2222" , "friends":
         [
           {"id":1, "name": "Jonathan Kiger"},
-        ]
+        ], "pic" : "http://randomuser.me/api/portraits/men/79.jpg"
 
       },
-      { "id": 5, "name": "Jonathan Kiger", "u":"guest1", "pw":"pw1", "friends":
+      { "id": 5, "name": "Jonathan Kiger", "u":"guest1", "pw":"pw1","email":"guest1@ucsd.edu", "number":"(111)111-1111" , "friends":
         [
           {"id":1, "name": "Jane Doe"},
           {"id":2, "name": "John Doe"},
           {"id":3, "name": "Yvonne Hou"},
           {"id":4, "name": "Alex Mao"}
-        ]
+        ], "pic" : "http://randomuser.me/api/portraits/men/35.jpg"
 
       }
     ]};

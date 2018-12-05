@@ -155,12 +155,7 @@ class Login extends React.Component{
       <div>
         <div className={classes.root}>
           <AppBar position="static" title ="Splitmo" >
-            <Toolbar>
-              <Button
-                className={classes.menuButton}
-                color="inherit"
-                aria-label="Open drawer"
-              />              
+            <Toolbar>            
                 <Typography variant="h6" color="inherit" className={classes.grow}>
                   Splitmo
                 </Typography>
