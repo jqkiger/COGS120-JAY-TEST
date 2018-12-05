@@ -363,7 +363,7 @@ class Home extends React.Component {
 
         <Dialog
           maxWidth= 'sm'
-          fullWidth={true}
+          scroll={'body'}
           open={this.state.confirmationOpen}
           onClose={this.handleCancel}
           aria-labelledby="confirmation-dialog"
@@ -387,7 +387,7 @@ class Home extends React.Component {
               <FormControl className={classes.formControl}>
                 <Input
                   type="number"
-                  style={{width:30}}
+                  style={{width:50}}
                   id="adornment-amount"
                   value={this.state.charges[n.id-1]}
                   onChange={(event) =>this.handleChangeCharge(n, event)}
@@ -403,7 +403,7 @@ class Home extends React.Component {
               <FormControl className={classes.formControl} >
                 <Input
                   type="number"
-                  style={{width:30}}
+                  style={{width:50}}
                   id="adornment-amount"
                   value={this.state.ownerPay}
                   onChange={this.handleChangeOwnerPay}
