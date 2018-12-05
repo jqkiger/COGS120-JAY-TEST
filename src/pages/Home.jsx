@@ -63,6 +63,11 @@ const styles = theme => ({
     marginTop: -75,
     marginRight: -60
   },
+  formControl: {
+    margin: 0,
+    fullWidth: false,
+    wrap: 'nowrap'
+  },
 });
 
 
@@ -135,11 +140,9 @@ class Home extends React.Component {
 
   handleOk = () => {
     console.log(this.state.people);
-    var ppl = parseInt(this.state.people);
     var amnt = parseFloat(this.state.amount);
-    console.log(ppl);
     console.log(amnt);
-    if(!isNaN(ppl) && !isNaN(amnt) && this.state.description != ""){
+    if( !isNaN(amnt) && this.state.title != ""){
       this.setState({ open: false, pageTwoOpen: true });
     }
   };
@@ -149,18 +152,14 @@ class Home extends React.Component {
   };
 
   handleConfirmation = () => {
-    var ppl = parseInt(this.state.people);
-    var added = this.state.checked.length;
-    if(added == ppl){
-      this.setState({ confirmationOpen: true, pageTwoOpen: false });
-      var charge = this.calculateCharge();
-      const {charges} = this.state;
-      var newCharges = [...charges]
-      for (var i=0; i<this.state.people; i++){
-        newCharges[i] = charge
-      }
-      this.setState({charges: newCharges, ownerPay:charge})
+    this.setState({ confirmationOpen: true, pageTwoOpen: false });
+    var charge = this.calculateCharge();
+    const {charges} = this.state;
+    var newCharges = [...charges]
+    for (var i=0; i<this.state.people; i++){
+      newCharges[i] = charge
     }
+    this.setState({charges: newCharges, ownerPay:charge})
   };
 
   handleCreateActivity = () => {
@@ -223,6 +222,7 @@ class Home extends React.Component {
 
     this.setState({
       checked: newChecked,
+      people: newChecked.length
     });
   };
 
@@ -318,7 +318,8 @@ class Home extends React.Component {
       <div>
       <AppBar/>
         <Dialog
-          maxWidth= 'md'
+          fullWidth={true}
+          maxWidth= 'sm'
           open={this.state.pageTwoOpen}
           onClose={this.handleCancel}
           aria-labelledby="add-people-dialog"
@@ -361,7 +362,8 @@ class Home extends React.Component {
         </Dialog>
 
         <Dialog
-          maxWidth= 'md'
+          maxWidth= 'sm'
+          fullWidth={true}
           open={this.state.confirmationOpen}
           onClose={this.handleCancel}
           aria-labelledby="confirmation-dialog"
@@ -382,10 +384,10 @@ class Home extends React.Component {
             <ListItem key={n} >
               <Avatar alt="Remy Sharp" src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png" />            
               <ListItemText primary={n.name +" is being charged "} />
-              <FormControl >
+              <FormControl className={classes.formControl}>
                 <Input
                   type="number"
-
+                  style={{width:75}}
                   id="adornment-amount"
                   value={this.state.charges[n.id-1]}
                   onChange={(event) =>this.handleChangeCharge(n, event)}
@@ -397,11 +399,11 @@ class Home extends React.Component {
           ))}
             <ListItem>
               <Avatar alt="Remy Sharp" src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png" />            
-              <ListItemText primary={"You Pay "} />
-              <FormControl >
+              <ListItemText>You will be paying </ListItemText>
+              <FormControl className={classes.formControl} >
                 <Input
                   type="number"
-
+                  style={{width:75}}
                   id="adornment-amount"
                   value={this.state.ownerPay}
                   onChange={this.handleChangeOwnerPay}
@@ -440,7 +442,8 @@ class Home extends React.Component {
         </div>
         <div>
           <Dialog
-            maxWidth= 'md'
+            fullWidth={true}
+            maxWidth= 'sm'
             open={this.state.open}
             onClose={this.handleCancel}
             aria-labelledby="form-dialog-title"
@@ -465,7 +468,7 @@ class Home extends React.Component {
                 value={this.state.title}
                 margin="dense"
                 id="standard-required"
-                label="Title of purchase"
+                label="Title of purchase *"
                 type="text"
                 fullWidth
                 onChange={this.handleChangeTitle}
@@ -481,7 +484,7 @@ class Home extends React.Component {
                 onChange={this.handleChangeDescription}
               />
               <FormControl fullWidth>
-                <InputLabel  htmlFor="adornment-amount">Amount</InputLabel>
+                <InputLabel  htmlFor="adornment-amount">Amount*</InputLabel>
                 <Input
                   type="number"
 
@@ -492,7 +495,7 @@ class Home extends React.Component {
                   startAdornment={<InputAdornment position="start">$</InputAdornment>}
                 />
               </FormControl>
-              <TextField
+              {/*<TextField
                 autoFocus
                 value={this.state.people}
                 margin="dense"
@@ -501,7 +504,7 @@ class Home extends React.Component {
                 type="number"
                 fullWidth
                 onChange={this.handleChangePeople}
-              />
+              />*/}
               </DialogContent>
             {/*<DialogTitle id="confirmation-dialog-title">
               Activity Type
