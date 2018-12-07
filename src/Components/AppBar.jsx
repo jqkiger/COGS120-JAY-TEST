@@ -19,6 +19,8 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import MenuList from "@material-ui/core/MenuList";
 import MenuItem from "@material-ui/core/MenuItem";
+import Avatar from "@material-ui/core/Avatar";
+
 
 import MenuIcon from "@material-ui/icons/Menu";
 import NotificationsIcon from "@material-ui/icons/Notifications";
@@ -26,6 +28,7 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import Home from "@material-ui/icons/Home";
 import Group from "@material-ui/icons/Group";
 import ExitToApp from "@material-ui/icons/ExitToApp"
+import image from "../Images/splitmo.jpg";
 
 const styles = {
   root: {
@@ -140,7 +143,12 @@ class ButtonAppBar extends React.Component {
                 Splitmo
               </Typography>
             </Button>
-
+            <div>
+                <Avatar
+                  alt="Remy Sharp"
+                  src={image}
+                />
+            </div>
           </Toolbar>
         </AppBar>
 
