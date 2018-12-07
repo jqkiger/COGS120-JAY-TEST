@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import classNames from 'classnames';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -19,8 +20,20 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import Radio from "@material-ui/core/Radio";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
-import IconButton from "@material-ui/core/IconButton";
+import Toolbar from "@material-ui/core/Toolbar";
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
 
+
+
+import WarningIcon from '@material-ui/icons/Warning';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import ErrorIcon from '@material-ui/icons/Error';
+import InfoIcon from '@material-ui/icons/Info';
+import CloseIcon from '@material-ui/icons/Close';
+import green from '@material-ui/core/colors/green';
+import amber from '@material-ui/core/colors/amber';
+import IconButton from "@material-ui/core/IconButton";
 import AddAPhoto from "@material-ui/icons/AddAPhoto";
 import AddIcon from "@material-ui/icons/Add";
 import withRoot from "../withRoot";
@@ -64,6 +77,17 @@ function calculateOwed(data) {
 	return val.toFixed(2);
 }
 
+
+function calculatePay(data){
+	var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+	var arr = data.participants;
+	for(var i =0; i<arr.length;i++){
+		if(arr[i].name === currentUser.name){
+			return arr[i].amount;
+		} 
+	}
+}
+
 function calculatePaid(data) {
 	var i;
 	var val = 0;
@@ -77,11 +101,98 @@ function calculatePaid(data) {
 }
 
 
+
+const variantIcon = {
+  success: CheckCircleIcon,
+  warning: WarningIcon,
+  error: ErrorIcon,
+  info: InfoIcon,
+};
+
+const styles1 = theme => ({
+  success: {
+    backgroundColor: green[600],
+  },
+  error: {
+    backgroundColor: theme.palette.error.dark,
+  },
+  info: {
+    backgroundColor: theme.palette.primary.dark,
+  },
+  warning: {
+    backgroundColor: amber[700],
+  },
+  icon: {
+    fontSize: 20,
+  },
+  iconVariant: {
+    opacity: 0.9,
+    marginRight: theme.spacing.unit,
+  },
+  message: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+});
+
+function MySnackbarContent(props) {
+  const { classes, className, message, onClose, variant, ...other } = props;
+  const Icon = variantIcon[variant];
+
+  return (
+    <SnackbarContent
+      className={classNames(classes[variant], className)}
+      aria-describedby="client-snackbar"
+      message={
+        <span id="client-snackbar" className={classes.message}>
+          <Icon className={classNames(classes.icon, classes.iconVariant)} />
+          {message}
+        </span>
+      }
+      action={[
+        <IconButton
+          key="close"
+          aria-label="Close"
+          color="inherit"
+          className={classes.close}
+          onClick={onClose}
+        >
+          <CloseIcon className={classes.icon} />
+        </IconButton>,
+      ]}
+      {...other}
+    />
+  );
+}
+
+MySnackbarContent.propTypes = {
+classes: PropTypes.object.isRequired,
+className: PropTypes.string,
+message: PropTypes.node,
+onClose: PropTypes.func,
+variant: PropTypes.oneOf(['success', 'warning', 'error', 'info']).isRequired,
+};
+const MySnackbarContentWrapper = withStyles(styles1)(MySnackbarContent);
+
 class Activity extends React.Component {
 	state = {
 		remindOpen: false,
 		payOpen: false,
-		descriptionOpen: false
+		descriptionOpen: false,
+		paid: false,
+		reminded: false
+	};
+
+	handleCloseConfirmationSnack = (event, reason) => {
+	    if (reason === 'clickaway') {
+	      return;
+	    }
+
+	    this.setState({ paid: false , reminded: false,});
+	};
+
+	handleConfirmationSnack = () => {
+	    this.setState({ paid: true, reminded: true,  });
 	};
 
 	handleClickPay = () => {
@@ -103,7 +214,7 @@ class Activity extends React.Component {
 	};
 
 	handleCloseRemind = () => {
-		this.setState({ remindOpen: false });
+		this.setState({ remindOpen: false, reminded: true });
 	};
 
 	handleClickDescription = () => {
@@ -115,9 +226,11 @@ class Activity extends React.Component {
 	};
 
 	handlePay = index => {
+		this.setState({paid: true})
 		console.log("handlePay");
 		console.log(this.props.data.id);
 		this.setState({ payOpen: false });
+		
 		this.props.update(index);
 	};
 
@@ -134,8 +247,6 @@ class Activity extends React.Component {
 
 	isOwner = () =>{
 		var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
-		console.log("I am hungry");
-		console.log(currentUser.name);
 		if(this.props.data.owner == currentUser.name){
 			return true;
 		}
@@ -175,8 +286,22 @@ class Activity extends React.Component {
 		return str;
 	}
 
+	getPic = name =>{
+		var users = JSON.parse(sessionStorage.getItem('users'));
+
+		var index = 0
+  		for (var i=0; i<users.length;i++){
+  			if(users[i].name === name){
+  				index = i
+  				break;
+  			}
+  		}
+  		return  users[index].pic;
+	}
+
 	render() {
-		const { payOpen, remindOpen, descriptionOpen } = this.state;
+		const { classes } = this.props;
+		const { payOpen, remindOpen, descriptionOpen} = this.state;
 		const data = this.props.data;
 		let buttons;
 		let title;
@@ -226,7 +351,7 @@ class Activity extends React.Component {
 						primary={
 							data.title +
 							" - You owe "+ data.owner +" $" +
-							data.participants[0].amount
+							calculatePay(data)
 						}
 					/>
 				);
@@ -245,7 +370,7 @@ class Activity extends React.Component {
 						primary={
 							data.title +
 							" - You paid "+ data.owner +" $" +
-							data.participants[0].amount
+							calculatePay(data)
 						}
 					/>
 				);
@@ -260,7 +385,7 @@ class Activity extends React.Component {
 				>
 					<Avatar
 						alt="Remy Sharp"
-						src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png"
+						src={this.getPic(data.owner)}
 					/>
 					{title}
 					<ListItemSecondaryAction>{buttons}</ListItemSecondaryAction>
@@ -272,7 +397,7 @@ class Activity extends React.Component {
 					aria-labelledby="pay-dialog"
 				>
 					<DialogTitle id="pay-dialog">
-						{"Pay " + data.owner + " $" + calculateOwed(data) + "?"}
+						{"Pay " + data.owner + " $" + calculatePay(data) + "?"}
 					</DialogTitle>
 					<DialogActions>
 						<Button
@@ -297,28 +422,36 @@ class Activity extends React.Component {
 					onClose={this.handleCloseRemind}
 					aria-labelledby="remind-dialog"
 				>
-					<DialogTitle id="remind-dialog">
-						&nbsp; &nbsp; &nbsp; Select the users you need to remind &nbsp; &nbsp; &nbsp; &nbsp;
-					</DialogTitle>
+					<DialogTitle id="form-dialog-title" style={{margin: 0}}>
+			            <Toolbar style={{margin: 0}}>
+			              <Typography variant="h6" color="inherit" style={{flexGrow: 1, textAlign: "center", margin: 0}}>
+			                Select users to remind
+			              </Typography>
+			              <Button style={{marginTop: -75, marginRight: -60}} color="inherit" onClick={this.handleCloseRemind} aria-label="Close">
+			                X
+			              </Button>
+			            </Toolbar>
+			         </DialogTitle>
 					<DialogContent>
 						<DialogContent>
-							<List dense>
+							<List dense = {true}>
 								{debtors.map(value => (
-									<ListItem key={value} button>
+									<ListItem key={value}>
 										<Avatar
 											alt="Remy Sharp"
-											src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png"
+											src={this. getPic(value.name)}
 										/>
-										<ListItemText primary={value.name}>
-										</ListItemText>
-										<ListItemSecondaryAction>
+										{console.log("RAA")}
+										{console.log(value)}
+										<ListItemText primary={value.name + " owes $" + value.amount}/>
+										
 											<Button
 												variant = "contained"
 												color ="inherit"
+												size = "small"
 												onClick={this.handleCloseRemind}>
 												Send Reminder
 											</Button>
-										</ListItemSecondaryAction>
 									</ListItem>
 								))}
 							</List>
@@ -348,6 +481,37 @@ class Activity extends React.Component {
 					</DialogContent>
 					<DialogActions>{buttons}</DialogActions>
 				</Dialog>
+			<Snackbar
+	          anchorOrigin={{
+	            vertical: 'bottom',
+	            horizontal: 'left',
+	          }}
+	          open={this.state.paid}
+	          autoHideDuration={5000}
+	          onClose={this.handleCloseConfirmationSnack}
+	        >
+	          <MySnackbarContentWrapper
+	            onClose={this.handleCloseConfirmationSnack}
+	            variant="success"
+	            message="Successfully Paid!"
+	          />
+	        </Snackbar>
+
+	        <Snackbar
+	          anchorOrigin={{
+	            vertical: 'bottom',
+	            horizontal: 'left',
+	          }}
+	          open={this.state.reminded}
+	          autoHideDuration={5000}
+	          onClose={this.handleCloseConfirmationSnack}
+	        >
+	          <MySnackbarContentWrapper
+	            onClose={this.handleCloseConfirmationSnack}
+	            variant="success"
+	            message="Reminder Sent!"
+	          />
+	        </Snackbar>
 			</div>
 		);
 	}

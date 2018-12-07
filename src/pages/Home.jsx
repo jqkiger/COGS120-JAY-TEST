@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import classNames from 'classnames';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -25,17 +26,23 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Toolbar from '@material-ui/core/Toolbar';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
 
 
 
-
-
+import WarningIcon from '@material-ui/icons/Warning';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import ErrorIcon from '@material-ui/icons/Error';
+import InfoIcon from '@material-ui/icons/Info';
+import CloseIcon from '@material-ui/icons/Close';
+import green from '@material-ui/core/colors/green';
+import amber from '@material-ui/core/colors/amber';
 import AddAPhoto from "@material-ui/icons/AddAPhoto";
 import AddIcon from "@material-ui/icons/Add";
 import withRoot from "../withRoot";
 import AppBar from "../Components/AppBar.jsx";
 import ActivityList from "../Components/ActivityList.jsx";
-import CloseIcon from '@material-ui/icons/Close';
 
 
 const styles = theme => ({
@@ -63,16 +70,22 @@ const styles = theme => ({
     marginTop: -75,
     marginRight: -60
   },
+  formControl: {
+    margin: 0,
+    fullWidth: false,
+    wrap: 'nowrap'
+  },
 });
 
 
 const inputProps = {
   step: 0.01,
-  startAdornment: <InputAdornment position="start">Kg</InputAdornment>
+  startAdornment: <InputAdornment position="start">$</InputAdornment>
 };
 
 const options = ["Food", "Recreation", "Shopping", "Bills", "Other"];
 
+const temp = []
 
 function getFriends(){
 	var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
@@ -92,14 +105,94 @@ function getHistory(){
     return history;
 }
 
+const variantIcon = {
+  success: CheckCircleIcon,
+  warning: WarningIcon,
+  error: ErrorIcon,
+  info: InfoIcon,
+};
+
+const styles1 = theme => ({
+  success: {
+    backgroundColor: green[600],
+  },
+  error: {
+    backgroundColor: theme.palette.error.dark,
+  },
+  info: {
+    backgroundColor: theme.palette.primary.dark,
+  },
+  warning: {
+    backgroundColor: amber[700],
+  },
+  icon: {
+    fontSize: 20,
+  },
+  iconVariant: {
+    opacity: 0.9,
+    marginRight: theme.spacing.unit,
+  },
+  message: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+});
+
+function MySnackbarContent(props) {
+  const { classes, className, message, onClose, variant, ...other } = props;
+  const Icon = variantIcon[variant];
+
+  return (
+    <SnackbarContent
+      className={classNames(classes[variant], className)}
+      aria-describedby="client-snackbar"
+      message={
+        <span id="client-snackbar" className={classes.message}>
+          <Icon className={classNames(classes.icon, classes.iconVariant)} />
+          {message}
+        </span>
+      }
+      action={[
+        <IconButton
+          key="close"
+          aria-label="Close"
+          color="inherit"
+          className={classes.close}
+          onClick={onClose}
+        >
+          <CloseIcon className={classes.icon} />
+        </IconButton>,
+      ]}
+      {...other}
+    />
+  );
+}
+
+  MySnackbarContent.propTypes = {
+  classes: PropTypes.object.isRequired,
+  className: PropTypes.string,
+  message: PropTypes.node,
+  onClose: PropTypes.func,
+  variant: PropTypes.oneOf(['success', 'warning', 'error', 'info']).isRequired,
+  };
+  const MySnackbarContentWrapper = withStyles(styles1)(MySnackbarContent);
+
 class Home extends React.Component {
   state = {
     open: false,
     pageTwoOpen: false,
     confirmationOpen: false,
+    confirmed: false,
+    errorSnack: false,
+    errorSnackPeople:false,
+    invalid: false,
+    title: "",
     description: "",
     checked: [],
-    title: "",
+    charges: [],
+    ownerPay: 0,
+    sum: 0
+
   };
 
   handleClick = () => {
@@ -117,23 +210,38 @@ class Home extends React.Component {
       open: false, 
       pageTwoOpen: false, 
       confirmationOpen: false,
-      description: "",
       checked: [],
       amount: '',
       title: "",
-      people: ''
+      description: "",
+      people: '',
+      charges:[],
+      ownerPay: 0,
+      sum: 0
     });
+  };
+
+  handleCloseConfirmationSnack = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    this.setState({ confirmed: false , errorSnack: false, errorSnackPeople: false, invalid: false});
+  };
+
+  handleConfirmationSnack = () => {
+    this.setState({ confirmed: true, errorSnack: true, errorSnackPeople: true, invalid: true });
   };
 
   handleOk = () => {
     console.log(this.state.people);
-    var ppl = parseInt(this.state.people);
     var amnt = parseFloat(this.state.amount);
-    console.log(ppl);
     console.log(amnt);
-    if(!isNaN(ppl) && !isNaN(amnt) && this.state.description != ""){
+    if( !isNaN(amnt) && this.state.title != ""){
       this.setState({ open: false, pageTwoOpen: true });
+      
     }
+    else{this.setState({errorSnack: true})}
   };
 
   handleChange = (event, value) => {
@@ -141,16 +249,37 @@ class Home extends React.Component {
   };
 
   handleConfirmation = () => {
-    var ppl = parseInt(this.state.people);
-    var added = this.state.checked.length;
-    if(added == ppl){
+    if(this.state.people > 0){
       this.setState({ confirmationOpen: true, pageTwoOpen: false });
+      var charge = this.calculateCharge();
+      const {charges} = this.state;
+      var newCharges = [...charges]
+      for (var i=0; i<this.state.people; i++){
+        newCharges[i] = charge
+      }
+      this.setState({charges: newCharges, ownerPay:charge})
+    }
+    else{
+      this.setState({errorSnackPeople: true})
     }
   };
 
   handleCreateActivity = () => {
-    this.updateData();
-    this.setState({ confirmationOpen: false });
+    var sum = 0
+    for(var i=0; i<this.state.people;i++){
+      sum += parseFloat(this.state.charges[i])
+    }
+    sum = sum + parseFloat(this.state.ownerPay)
+    console.log("sum")
+    console.log(sum)
+    if(sum === parseFloat(this.state.amount)){
+      this.updateData();
+      this.handleCancel();
+      this.setState({confirmed: true})
+    }
+    else{
+      this.setState({invalid: true})
+    }
   };
 
   handleChangeDescription = (event) => {
@@ -170,6 +299,19 @@ class Home extends React.Component {
     this.setState({ people: event.target.value });
   };
 
+  handleChangeOwnerPay = (event) => {
+    this.setState({ ownerPay: event.target.value });
+  };
+
+  handleChangeCharge =(n, event) => {
+    var ind = n.id-1
+    const {charges} = this.state;
+    const newCharges = [...charges]
+    newCharges[ind] = parseFloat(event.target.value);
+    this.setState({charges: newCharges})
+    console.log(this.state.charges)
+  };
+
   handleToggle = val=> () => {
     var value = parseInt(val);
     console.log(value);
@@ -186,6 +328,7 @@ class Home extends React.Component {
 
     this.setState({
       checked: newChecked,
+      people: newChecked.length
     });
   };
 
@@ -203,6 +346,15 @@ class Home extends React.Component {
       });
     }
   };
+
+  getSum(){
+    var sum = 0
+    for(var i=0; i<this.state.people;i++){
+      sum += parseFloat(this.state.charges[i])
+    }
+    sum = sum + parseFloat(this.state.ownerPay)
+    return sum
+  }
  
 
   calculateCharge(){
@@ -217,13 +369,13 @@ class Home extends React.Component {
     if(!this.state.confirmationOpen){
       return peopleList;
     }
-    console.log(friends);
-    console.log(this.state.checked);
-    console.log(friends[0].name)
-    var charge = this.calculateCharge();
+    //console.log(friends);
+    //console.log(this.state.checked);
+    //console.log(friends[0].name)
     for(var i=0; i<this.state.people;i++){
       var ind = this.state.checked[i];
       var fname = friends[ind-1].name;
+      var charge = this.state.charges[i]
       peopleList.push({id:(i+1), name:fname, amount: charge, paid: "0"})
     }
     console.log(peopleList);
@@ -246,12 +398,24 @@ class Home extends React.Component {
                 complete: "0",
                 participants: peopleList
             }
-    console.log(data);
+    console.log(data)
     activities.push(data);
-    console.log(activities);
     sessionStorage.setItem('activities', JSON.stringify(activities));
     sessionStorage.setItem('called', "1");
     this.setState(this.state);
+  }
+
+  getPic = name =>{
+    var users = JSON.parse(sessionStorage.getItem('users'));
+
+    var index = 0
+      for (var i=0; i<users.length;i++){
+        if(users[i].name === name){
+          index = i
+          break;
+        }
+      }
+      return  users[index].pic;
   }
 
   render() {
@@ -266,13 +430,15 @@ class Home extends React.Component {
       people,
       checked,
       title,
+      charges,
     } = this.state;
     const friends = getFriends();
     return (
       <div>
       <AppBar/>
         <Dialog
-          maxWidth= 'md'
+          fullWidth={true}
+          maxWidth= 'sm'
           open={this.state.pageTwoOpen}
           onClose={this.handleCancel}
           aria-labelledby="add-people-dialog"
@@ -290,10 +456,9 @@ class Home extends React.Component {
           
           <DialogContent>
           <List dense>
-          {console.log(friends)}
           {friends.map(value => (
             <ListItem key={value} >
-              <Avatar alt="Remy Sharp" src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png" />
+              <Avatar alt="Remy Sharp" src={this.getPic(value.name)} />
               <ListItemText primary={value.name} />
               <ListItemSecondaryAction>
                 <Checkbox
@@ -316,7 +481,8 @@ class Home extends React.Component {
         </Dialog>
 
         <Dialog
-          maxWidth= 'md'
+          maxWidth= 'sm'
+          scroll={'body'}
           open={this.state.confirmationOpen}
           onClose={this.handleCancel}
           aria-labelledby="confirmation-dialog"
@@ -324,7 +490,7 @@ class Home extends React.Component {
           <DialogTitle id="form-dialog-title">
             <Toolbar>
               <Typography variant="h6" color="inherit" className={classes.root}>
-                Confirmation split activity Page(Even split for now)
+                Confirmation split activity Page
               </Typography>
               <Button className={classes.closeButton}color="inherit" onClick={this.handleCancel} aria-label="Close">
                 X
@@ -333,14 +499,43 @@ class Home extends React.Component {
           </DialogTitle>
           <DialogContent>
           <List dense>
-          {this.getPeopleAdded().map(value => (
-            <ListItem key={value} >
-              <Avatar alt="Remy Sharp" src="http://multisim-insigneo.org/wp-content/uploads/2015/02/blank-profile-picture-300x300.png" />
-              <ListItemText primary={value.name +" is being charged $"+this.calculateCharge()} />
+          {this.getPeopleAdded().map( n=> (
+            <ListItem key={n} >
+              <Avatar alt="Remy Sharp" src={this.getPic(n.name)} />            
+              <ListItemText primary={n.name +" is being charged "} />
+              <FormControl className={classes.formControl}>
+                <Input
+                  type="number"
+                  style={{width:75}}
+                  id="adornment-amount"
+                  value={this.state.charges[n.id-1]}
+                  onChange={(event) =>this.handleChangeCharge(n, event)}
+                  inputProps={inputProps}
+                  startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                />
+              </FormControl>
             </ListItem>
           ))}
+            <ListItem>
+              <Avatar alt="Remy Sharp" src={JSON.parse(sessionStorage.getItem("currentUser")).pic} />            
+              <ListItemText>You will be paying </ListItemText>
+              <FormControl className={classes.formControl} >
+                <Input
+                  type="number"
+                  style={{width:75}}
+                  id="adornment-amount"
+                  value={this.state.ownerPay}
+                  onChange={this.handleChangeOwnerPay}
+                  inputProps={inputProps}
+                  startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                />
+              </FormControl>
+            </ListItem>
           </List>
           </DialogContent>
+          <DialogContentText style={{textAlign: 'center'}}>
+                Total amount ${this.getSum()} of ${parseFloat(this.state.amount)}
+          </DialogContentText>
           <DialogActions>
              <Button onClick={this.handleBack} color="primary">
               Back
@@ -366,7 +561,9 @@ class Home extends React.Component {
         </div>
         <div>
           <Dialog
-            maxWidth= 'md'
+            
+            maxWidth= 'sm'
+            scroll={'body'}
             open={this.state.open}
             onClose={this.handleCancel}
             aria-labelledby="form-dialog-title"
@@ -383,21 +580,19 @@ class Home extends React.Component {
           </DialogTitle>
             <DialogContent>
               <DialogContentText>
-                To split a purchase please enter a description, the total cost,
-                and the number of people involved (excluding yourself).
+                To split a purchase please enter a description and the total cost
               </DialogContentText>
               <TextField
                 autoFocus
                 value={this.state.title}
                 margin="dense"
                 id="standard-required"
-                label="Title of purchase"
+                label="Title of purchase *"
                 type="text"
                 fullWidth
                 onChange={this.handleChangeTitle}
               />
               <TextField
-                autoFocus
                 value={this.state.description}
                 margin="dense"
                 id="standard-required"
@@ -407,7 +602,7 @@ class Home extends React.Component {
                 onChange={this.handleChangeDescription}
               />
               <FormControl fullWidth>
-                <InputLabel  htmlFor="adornment-amount">Amount</InputLabel>
+                <InputLabel  htmlFor="adornment-amount">Amount*</InputLabel>
                 <Input
                   type="number"
 
@@ -418,44 +613,7 @@ class Home extends React.Component {
                   startAdornment={<InputAdornment position="start">$</InputAdornment>}
                 />
               </FormControl>
-              <TextField
-                autoFocus
-                value={this.state.people}
-                margin="dense"
-                id="standard-required"
-                label="Number of other people"
-                type="number"
-                fullWidth
-                onChange={this.handleChangePeople}
-              />
               </DialogContent>
-            {/*<DialogTitle id="confirmation-dialog-title">
-              Activity Type
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText>Activity Type</DialogContentText>
-              <RadioGroup
-                ref={ref => {
-                  this.radioGroupRef = ref;
-                }}
-                aria-label="Ringtone"
-                name="ringtone"
-                value={this.state.value}
-                onChange={this.handleChange}
-              >
-                {options.map(option => (
-                  <FormControlLabel
-                    value={option}
-                    key={option}
-                    control={<Radio />}
-                    label={option}
-                  />
-                ))}
-              </RadioGroup>
-              <Button onClick={this.handleClose} color="primary">
-                Add a picture of receipt
-              </Button>
-            </DialogContent>*/}
             <DialogActions >
               <Button onClick={this.handleCancel} color="primary">
                 Cancel
@@ -466,6 +624,70 @@ class Home extends React.Component {
             </DialogActions>
           </Dialog>
         </div>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          open={this.state.confirmed}
+          autoHideDuration={5000}
+          onClose={this.handleCloseConfirmationSnack}
+        >
+          <MySnackbarContentWrapper
+            onClose={this.handleCloseConfirmationSnack}
+            variant="success"
+            message="Split Activity Successfully made!"
+          />
+        </Snackbar>
+
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          open={this.state.errorSnack}
+          autoHideDuration={5000}
+          onClose={this.handleCloseConfirmationSnack}
+        >
+          <MySnackbarContentWrapper
+            onClose={this.handleCloseConfirmationSnack}
+            variant="error"
+            message="Error: Make sure to enter amount and title"
+          />
+        </Snackbar>
+
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          open={this.state.errorSnackPeople}
+          autoHideDuration={5000}
+          onClose={this.handleCloseConfirmationSnack}
+        >
+          <MySnackbarContentWrapper
+            onClose={this.handleCloseConfirmationSnack}
+            variant="error"
+            message="Error: Select atleast one person"
+          />
+        </Snackbar>
+
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          open={this.state.invalid}
+          autoHideDuration={5000}
+          onClose={this.handleCloseConfirmationSnack}
+        >
+          <MySnackbarContentWrapper
+            onClose={this.handleCloseConfirmationSnack}
+            variant="error"
+            message="Error: The amount does not add up"
+          />
+        </Snackbar>
+
       </div>
     );
   }

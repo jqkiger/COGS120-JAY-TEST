@@ -19,16 +19,20 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import MenuList from "@material-ui/core/MenuList";
 import MenuItem from "@material-ui/core/MenuItem";
+import Avatar from "@material-ui/core/Avatar";
+
 
 import MenuIcon from "@material-ui/icons/Menu";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import AccountCircle from "@material-ui/icons/AccountCircle";
+import Home from "@material-ui/icons/Home";
 import Group from "@material-ui/icons/Group";
 import ExitToApp from "@material-ui/icons/ExitToApp"
+import image from "../Images/splitmo.jpg";
 
 const styles = {
   root: {
-    flexGrow: 1,
+
     textAlign: "center",
   },
   grow: {
@@ -69,6 +73,12 @@ class ButtonAppBar extends React.Component {
       <div className={classes.list}>
         <MenuList>
             <MenuItem button
+              component={Link} to ="/Home"
+              onClick={() => this.handleClickIcon()}>
+              <ListItemIcon> <Home/> </ListItemIcon>
+              <ListItemText> Home </ListItemText>
+            </MenuItem>
+            <MenuItem button
               component={Link} to ="/Profile"
               onClick={() => this.handleClickIcon()}>
               <ListItemIcon> <AccountCircle/> </ListItemIcon>
@@ -77,7 +87,7 @@ class ButtonAppBar extends React.Component {
 
           <MenuItem button
             component={Link} to ="/Friends"
-            onClick={() => this.handleClickFriends()}>
+            onClick={() => this.handleClickIcon()}>
             <ListItemIcon> <Group/> </ListItemIcon>
             <ListItemText> Friends </ListItemText>
           </MenuItem>
@@ -111,7 +121,7 @@ class ButtonAppBar extends React.Component {
     return (
       <div className={classes.root}>
         <AppBar position="static" title ="Splitmo" >
-          <Toolbar>
+          <Toolbar style={{justifyContent: 'center'}}>
             <Button
               className={classes.menuButton}
               color="inherit"
@@ -129,11 +139,16 @@ class ButtonAppBar extends React.Component {
               disableTouchRipple="true"
               focusRipple="true"
             >
-              <Typography variant="h6" color="inherit" className={classes.grow}>
+              <Typography variant="h6" color="inherit">
                 Splitmo
               </Typography>
             </Button>
-
+            <div>
+                <Avatar
+                  alt="Remy Sharp"
+                  src={image}
+                />
+            </div>
           </Toolbar>
         </AppBar>
 

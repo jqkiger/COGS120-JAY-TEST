@@ -91,7 +91,11 @@ class Login extends React.Component{
   };
 
   checkCredentials = () => {
-    var users = JSON.parse(sessionStorage.getItem('users')).list;
+    var users = JSON.parse(sessionStorage.getItem('users'));
+    if(!Array.isArray(users)){
+      users=users.list
+    }
+    console.log(users);
     for(var i=0; i<users.length;i++){
       console.log(users[i]);
       if(users[i].u == this.state.uname && users[i].pw == this.state.pw){
@@ -151,12 +155,7 @@ class Login extends React.Component{
       <div>
         <div className={classes.root}>
           <AppBar position="static" title ="Splitmo" >
-            <Toolbar>
-              <Button
-                className={classes.menuButton}
-                color="inherit"
-                aria-label="Open drawer"
-              />              
+            <Toolbar>            
                 <Typography variant="h6" color="inherit" className={classes.grow}>
                   Splitmo
                 </Typography>
